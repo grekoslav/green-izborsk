@@ -80,19 +80,23 @@ export function formatCsvUrl(sheetUrlOrId: string): string {
   let url = sheetUrlOrId.trim();
   if (!url) return '';
 
-  // Handle published web links (.../pubhtml or .../pub)
-  if (url.includes('/pubhtml')) {
-    return url.replace('/pubhtml', '/pub?output=csv');
-  }
-  if (url.includes('/pub?') && !url.includes('output=csv')) {
-    return url + '&output=csv';
-  }
-  if (url.endsWith('/pub')) {
-    return url + '?output=csv';
+  // Handle published web links (.../pubhtml or .../pub or /d/e/...)
+  if (url.includes('/pub')) {
+    if (url.includes('/pubhtml')) {
+      return url.replace('/pubhtml', '/pub?output=csv');
+    }
+    if (url.includes('/pub?') && !url.includes('output=csv')) {
+      return url + '&output=csv';
+    }
+    if (url.endsWith('/pub')) {
+      return url + '?output=csv';
+    }
+    return url;
   }
 
-  // Handle standard edit/share links (/d/SPREADSHEET_ID/edit)
-  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  // Handle standard edit/share links (/d/SPREADSHEET_ID/edit or /d/SPREADSHEET_ID)
+  // Skip '/d/e/' which indicates a published web app
+  const match = url.match(/\/d\/(?!e\/)([a-zA-Z0-9-_]+)/);
   if (match && match[1]) {
     return `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:csv`;
   }
