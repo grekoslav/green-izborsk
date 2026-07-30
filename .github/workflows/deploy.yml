@@ -1,32 +1,48 @@
-name: Deploy to GitHub Pages
+    name: Deploy Green Izborsk to GitHub Pages
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+    on:
+      push:
+        branches: [ main ]
+      schedule:
+        # Автоматическая сборка каждые 6 часов для обновления цен из Google Таблицы
+        - cron: '0 */6 * * *'
+      workflow_dispatch: # Запуск вручную по кнопке в GitHub
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout your repository using git
-        uses: actions/checkout@v4
-      - name: Install, build, and upload your site
-        uses: withastro/action@v3
-        with:
-          node-version: 22
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Setup Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: 22
+
+          - name: Install dependencies
+            run: npm ci
+
+          - name: Build site
+            run: npm run build
+
+          - name: Upload artifact
+            uses: actions/upload-pages-artifact@v3
+            with:
+              path: ./dist
+
+      deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+          - name: Deploy to GitHub Pages
+            id: deployment
+            uses: actions/deploy-pages@v4

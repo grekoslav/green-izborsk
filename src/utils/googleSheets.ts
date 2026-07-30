@@ -74,6 +74,37 @@ function getColValue(row: Record<string, string>, keys: string[]): string {
 }
 
 /**
+ * Formats any Google Sheet URL (edit, pubhtml, pub, share) into a clean CSV export URL
+ */
+export function formatCsvUrl(sheetUrlOrId: string): string {
+  let url = sheetUrlOrId.trim();
+  if (!url) return '';
+
+  // Handle published web links (.../pubhtml or .../pub)
+  if (url.includes('/pubhtml')) {
+    return url.replace('/pubhtml', '/pub?output=csv');
+  }
+  if (url.includes('/pub?') && !url.includes('output=csv')) {
+    return url + '&output=csv';
+  }
+  if (url.endsWith('/pub')) {
+    return url + '?output=csv';
+  }
+
+  // Handle standard edit/share links (/d/SPREADSHEET_ID/edit)
+  const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  if (match && match[1]) {
+    return `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:csv`;
+  }
+
+  if (!url.startsWith('http')) {
+    return `https://docs.google.com/spreadsheets/d/${url}/gviz/tq?tqx=out:csv`;
+  }
+
+  return url;
+}
+
+/**
  * Fetch products from a published Google Sheet CSV URL or Spreadsheet ID
  */
 export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Promise<Product[]> {
@@ -83,20 +114,7 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
   }
 
   try {
-    let csvUrl = sheetUrlOrId.trim();
-
-    // If a full Google Sheet URL is provided, convert to CSV export URL
-    if (csvUrl.includes('docs.google.com/spreadsheets')) {
-      const match = csvUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
-      if (match && match[1]) {
-        const spreadsheetId = match[1];
-        csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv`;
-      }
-    } else if (!csvUrl.startsWith('http')) {
-      // Treat as raw Spreadsheet ID
-      csvUrl = `https://docs.google.com/spreadsheets/d/${csvUrl}/gviz/tq?tqx=out:csv`;
-    }
-
+    const csvUrl = formatCsvUrl(sheetUrlOrId);
     const response = await fetch(csvUrl);
     if (!response.ok) {
       throw new Error(`HTTP error ${response.status}`);
