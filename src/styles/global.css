@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --color-surface: #f4fbf8;
+  --color-surface-dim: #d4dcd9;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: #e8efec;
+  --color-on-surface: #161d1b;
+  --color-on-surface-variant: #404943;
+  --color-primary: #32664a;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #4b7f61;
+  --color-on-primary-container: #f6fff6;
+  --color-secondary: #3d6751;
+  --color-on-secondary: #ffffff;
+  --color-outline: #717972;
+  --color-background: #f4fbf8;
+  --color-on-background: #161d1b;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+
+  --font-family-base: 'Inter', sans-serif;
+  
+  --font-size-display-lg: 57px;
+  --font-size-headline-lg: 32px;
+  --font-size-title-lg: 22px;
+  --font-size-body-lg: 16px;
+  --font-size-body-md: 14px;
+  --font-size-label-lg: 14px;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  --spacing-base: 8px;
+  --spacing-gutter: 24px;
+  --spacing-section: 80px;
+  --spacing-margin-desktop: 64px;
+  --spacing-margin-mobile: 16px;
+  
+  --container-max: 1280px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  color: var(--color-on-surface);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-gutter);
+}
+
+.section {
+  padding: var(--spacing-section) 0;
+}
+
+/* Button variants */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-label-lg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-container);
+  box-shadow: 0 4px 16px rgba(90, 143, 112, 0.08);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(50, 102, 74, 0.05);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface-variant);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: var(--font-size-body-lg);
+  background-color: var(--color-surface-container-lowest);
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.form-checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface-variant);
+}
+
+.form-checkbox {
+  margin-top: 4px;
+}

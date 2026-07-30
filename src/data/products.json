@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "category": "Овощи",
+    "name": "Фермерские томаты",
+    "price": "от 250 ₽/кг",
+    "description": "Спелые, сочные томаты, выращенные без применения химикатов.",
+    "image": "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop",
+    "inStock": true
+  },
+  {
+    "id": 2,
+    "category": "Овощи",
+    "name": "Молодой картофель",
+    "price": "от 120 ₽/кг",
+    "description": "Отборный картофель свежего урожая.",
+    "image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&auto=format&fit=crop",
+    "inStock": true
+  },
+  {
+    "id": 3,
+    "category": "Зелень",
+    "name": "Свежая зелень (ассорти)",
+    "price": "от 150 ₽/пучок",
+    "description": "Петрушка, укроп, кинза, лук прямо с грядки.",
+    "image": "https://images.unsplash.com/photo-1595858169229-373fc3e02d6b?w=800&auto=format&fit=crop",
+    "inStock": true
+  }
+]

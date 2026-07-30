@@ -1,0 +1,68 @@
+---
+import companyData from '../data/company.json';
+---
+
+<header class="header">
+  <div class="container header-container">
+    <a href="/" class="logo">
+      <span class="logo-text">{companyData.name}</span>
+    </a>
+    <nav class="nav">
+      <a href="#catalog" class="nav-link">Каталог</a>
+      <a href="#about" class="nav-link">О нас</a>
+      <a href="#contacts" class="nav-link">Контакты</a>
+    </nav>
+    <div class="header-actions">
+      <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="phone-link">{companyData.phone}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    background-color: var(--color-surface-container-lowest);
+    border-bottom: 1px solid var(--color-surface-container);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-text {
+    font-size: var(--font-size-title-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+  .nav {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .nav {
+      display: flex;
+      gap: 32px;
+    }
+  }
+  .nav-link {
+    font-size: var(--font-size-label-lg);
+    font-weight: 500;
+    color: var(--color-on-surface-variant);
+    transition: color 0.2s;
+  }
+  .nav-link:hover {
+    color: var(--color-primary);
+  }
+  .phone-link {
+    font-size: var(--font-size-label-lg);
+    font-weight: 600;
+    color: var(--color-on-surface);
+  }
+</style>

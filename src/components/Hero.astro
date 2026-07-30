@@ -1,0 +1,57 @@
+---
+import companyData from '../data/company.json';
+---
+
+<section class="hero section">
+  <div class="container hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title">Натуральные продукты из сердца Изборска</h1>
+      <p class="hero-text">{companyData.description} Мы доставляем свежесть прямо к вашему столу.</p>
+      <a href="#catalog" class="btn btn-primary">Перейти к каталогу</a>
+    </div>
+    <div class="hero-image-wrapper">
+      <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&auto=format&fit=crop" alt="Фермерские продукты" class="hero-image" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background-color: var(--color-surface);
+    padding-top: var(--spacing-section);
+    padding-bottom: var(--spacing-section);
+  }
+  .hero-container {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (min-width: 992px) {
+    .hero-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .hero-title {
+    font-size: var(--font-size-display-lg);
+    line-height: 1.1;
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+  .hero-text {
+    font-size: var(--font-size-title-lg);
+    color: var(--color-on-surface-variant);
+    margin-bottom: 40px;
+  }
+  .hero-image-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 4/3;
+  }
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

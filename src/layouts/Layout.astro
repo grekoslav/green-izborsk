@@ -1,0 +1,25 @@
+---
+import '../styles/global.css';
+import companyData from '../data/company.json';
+
+interface Props {
+  title?: string;
+}
+
+const { title = companyData.name } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={companyData.description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

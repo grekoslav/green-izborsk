@@ -1,0 +1,160 @@
+---
+---
+<div class="lead-form-wrapper" id="leadFormModal" aria-hidden="true">
+  <div class="lead-form-overlay" id="leadFormOverlay"></div>
+  <div class="lead-form-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Оставить заявку на заказ</h3>
+      <button class="modal-close" id="leadFormClose" aria-label="Закрыть">&times;</button>
+    </div>
+    
+    <form class="lead-form" id="orderForm">
+      <input type="hidden" name="productName" id="formProductName" value="">
+      
+      <div class="form-group">
+        <label for="name" class="form-label">Имя и фамилия</label>
+        <input type="text" id="name" name="name" class="form-input" required placeholder="Иван Иванов">
+      </div>
+      
+      <div class="form-group">
+        <label for="phone" class="form-label">Номер телефона</label>
+        <input type="tel" id="phone" name="phone" class="form-input" required placeholder="+7 (999) 000-00-00" pattern="^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$" title="Введите корректный номер телефона РФ">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-checkbox-container">
+          <input type="checkbox" id="consent" name="consent" class="form-checkbox" required>
+          <span>
+            Я согласен(на) на обработку персональных данных в соответствии с 
+            <a href="/privacy" class="privacy-link" target="_blank">пользовательским соглашением</a>.
+          </span>
+        </label>
+      </div>
+      
+      <button type="submit" class="btn btn-primary form-submit">Отправить заявку</button>
+    </form>
+    
+    <div class="form-success" id="formSuccess" style="display: none;">
+      <h3 class="modal-title" style="color: var(--color-primary);">Спасибо!</h3>
+      <p>Ваша заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('leadFormModal');
+  const overlay = document.getElementById('leadFormOverlay');
+  const closeBtn = document.getElementById('leadFormClose');
+  const form = document.getElementById('orderForm') as HTMLFormElement;
+  const successMsg = document.getElementById('formSuccess');
+  
+  // Expose function globally to open the form from any component
+  window.openLeadForm = function(productName: string) {
+    if(modal) {
+      modal.setAttribute('aria-hidden', 'false');
+      const inputProd = document.getElementById('formProductName') as HTMLInputElement;
+      if (inputProd) inputProd.value = productName;
+    }
+  };
+
+  const closeModal = () => {
+    if(modal) {
+      modal.setAttribute('aria-hidden', 'true');
+      if (form) form.reset();
+      if (successMsg) successMsg.style.display = 'none';
+      if (form) form.style.display = 'block';
+    }
+  };
+
+  if(overlay) overlay.addEventListener('click', closeModal);
+  if(closeBtn) closeBtn.addEventListener('click', closeModal);
+  
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Handle the form submission (e.g. sending to an API)
+      form.style.display = 'none';
+      if (successMsg) successMsg.style.display = 'block';
+    });
+  }
+</script>
+
+<style>
+  .lead-form-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .lead-form-wrapper[aria-hidden="false"] {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .lead-form-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+  
+  .lead-form-modal {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--color-surface-container-lowest);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    z-index: 1001;
+    margin: 16px;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .modal-title {
+    font-size: var(--font-size-title-lg);
+    color: var(--color-on-surface);
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--color-outline);
+    cursor: pointer;
+    line-height: 1;
+  }
+  
+  .privacy-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  
+  .form-submit {
+    width: 100%;
+    margin-top: 16px;
+  }
+  
+  .form-success {
+    text-align: center;
+    padding: 24px 0;
+  }
+</style>

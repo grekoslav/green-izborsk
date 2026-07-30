@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProductCard from '../components/ProductCard.astro';
+import LeadForm from '../components/LeadForm.astro';
+import companyData from '../data/company.json';
+import productsData from '../data/products.json';
+---
+
+<Layout>
+  <Header />
+  
+  <main>
+    <Hero />
+    
+    <section id="catalog" class="catalog section">
+      <div class="container">
+        <div class="catalog-header">
+          <h2 class="section-title">Наши продукты</h2>
+          <p class="section-subtitle">Свежие, натуральные, выращенные с любовью.</p>
+        </div>
+        
+        <div class="products-grid">
+          {productsData.map((product) => (
+            <ProductCard {...product} />
+          ))}
+        </div>
+      </div>
+    </section>
+    
+    <section id="about" class="about section">
+      <div class="container">
+        <div class="about-content">
+          <h2 class="section-title">О ферме "{companyData.name}"</h2>
+          <p class="about-text">
+            Мы находимся в экологически чистом районе Псковской области — в Изборске.
+            Наша философия — выращивать продукты так, как это делали наши предки:
+            без химии, с заботой о земле и здоровье людей.
+          </p>
+          <p class="about-text">
+            Все наши овощи, зелень и другая продукция — это результат кропотливого
+            ручного труда. Заказывая у нас, вы получаете еду прямо с грядки.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer id="contacts" class="footer">
+    <div class="container footer-container">
+      <div class="footer-info">
+        <h3 class="footer-title">{companyData.name}</h3>
+        <p>{companyData.description}</p>
+      </div>
+      
+      <div class="footer-contacts">
+        <h4>Контакты</h4>
+        <p><a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`}>{companyData.phone}</a></p>
+        <p><a href={`mailto:${companyData.email}`}>{companyData.email}</a></p>
+        <p>{companyData.address}</p>
+      </div>
+      
+      <div class="footer-links">
+        <h4>Дополнительно</h4>
+        <p><a href="/privacy">Пользовательское соглашение</a></p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; 2026 {companyData.name}. Все права защищены.</p>
+    </div>
+  </footer>
+  
+  <LeadForm />
+</Layout>
+
+<style>
+  .catalog {
+    background-color: var(--color-background);
+  }
+  
+  .catalog-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  
+  .section-title {
+    font-size: var(--font-size-headline-lg);
+    margin-bottom: 16px;
+    color: var(--color-primary);
+  }
+  
+  .section-subtitle {
+    font-size: var(--font-size-body-lg);
+    color: var(--color-on-surface-variant);
+  }
+  
+  .products-grid {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .about {
+    background-color: var(--color-surface);
+  }
+  
+  .about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .about-text {
+    font-size: var(--font-size-body-lg);
+    color: var(--color-on-surface-variant);
+    margin-bottom: 24px;
+  }
+  
+  .footer {
+    background-color: var(--color-on-surface);
+    color: var(--color-surface);
+    padding: 64px 0 24px;
+  }
+  
+  .footer-container {
+    display: grid;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  
+  @media (min-width: 768px) {
+    .footer-container {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+  
+  .footer-title {
+    font-size: var(--font-size-title-lg);
+    color: var(--color-surface-container-lowest);
+    margin-bottom: 16px;
+  }
+  
+  .footer-contacts h4, .footer-links h4 {
+    color: var(--color-surface-container-lowest);
+    margin-bottom: 16px;
+  }
+  
+  .footer-contacts p, .footer-links p {
+    margin-bottom: 12px;
+    color: var(--color-surface-dim);
+  }
+  
+  .footer-contacts a, .footer-links a {
+    color: inherit;
+    transition: color 0.2s;
+  }
+  
+  .footer-contacts a:hover, .footer-links a:hover {
+    color: var(--color-primary-fixed);
+  }
+  
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 24px;
+    text-align: center;
+    color: var(--color-surface-dim);
+    font-size: var(--font-size-body-md);
+  }
+</style>

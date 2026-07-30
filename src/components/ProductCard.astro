@@ -1,0 +1,127 @@
+---
+export interface Props {
+  id: number;
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+  inStock: boolean;
+  category: string;
+}
+
+const { id, name, price, description, image, inStock, category } = Astro.props;
+---
+
+<div class="product-card">
+  <div class="card-image-wrapper">
+    <img src={image} alt={name} class="card-image" loading="lazy" />
+    <span class="card-category">{category}</span>
+  </div>
+  
+  <div class="card-content">
+    <h3 class="card-title">{name}</h3>
+    <p class="card-price">{price}</p>
+    <p class="card-description">{description}</p>
+    
+    <div class="card-status">
+      {inStock ? (
+        <span class="status in-stock">В наличии</span>
+      ) : (
+        <span class="status out-of-stock">Под заказ</span>
+      )}
+    </div>
+    
+    <button class="btn btn-secondary card-btn" onclick={`window.openLeadForm('${name}')`}>
+      Оставить заявку
+    </button>
+  </div>
+</div>
+
+<style>
+  .product-card {
+    background-color: var(--color-surface-container-lowest);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-surface-container);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+  }
+  
+  .card-image-wrapper {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+  
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .card-category {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: var(--color-surface-container-lowest);
+    color: var(--color-primary);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-label-lg);
+    font-weight: 500;
+  }
+  
+  .card-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .card-title {
+    font-size: var(--font-size-title-lg);
+    margin-bottom: 8px;
+  }
+  
+  .card-price {
+    font-size: var(--font-size-body-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 16px;
+  }
+  
+  .card-description {
+    font-size: var(--font-size-body-md);
+    color: var(--color-on-surface-variant);
+    margin-bottom: 24px;
+    flex-grow: 1;
+  }
+  
+  .card-status {
+    margin-bottom: 24px;
+  }
+  
+  .status {
+    font-size: var(--font-size-label-lg);
+    padding: 4px 0;
+    font-weight: 500;
+  }
+  
+  .in-stock {
+    color: var(--color-primary);
+  }
+  
+  .out-of-stock {
+    color: var(--color-outline);
+  }
+  
+  .card-btn {
+    width: 100%;
+  }
+</style>
