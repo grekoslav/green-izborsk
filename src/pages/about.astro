@@ -1,0 +1,361 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LeadForm from '../components/LeadForm.astro';
+import companyData from '../data/company.json';
+
+const base = import.meta.env.BASE_URL;
+
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  'name': `О ферме — ${companyData.name}`,
+  'description': 'История создания нашей эко-фермы в Изборске, принципы органического земледелия и ручной сбор урожая.',
+  'url': `${Astro.site || ''}${base}about/`
+};
+---
+
+<Layout 
+  title={`О ферме — ${companyData.name}`}
+  description="История создания нашей эко-фермы в Изборской долине, принципы органического земледелия и традиции производства натуральных продуктов."
+  jsonLd={aboutSchema}
+>
+  <Header />
+
+  <main class="about-page">
+    <!-- Hero Banner -->
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Хлебные крошки">
+          <a href={base}>Главная</a>
+          <span class="sep">/</span>
+          <span class="current">О ферме</span>
+        </nav>
+
+        <span class="section-label">Экология и традиции</span>
+        <h1 class="page-title">О нашей ферме</h1>
+        <p class="page-subtitle">
+          Выращиваем натуральные продукты в экологически чистом районе Псковской области — с любовью к земле и заботой о вашем здоровье.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Story -->
+    <section class="section story-section">
+      <div class="container">
+        <div class="story-grid">
+          <div class="story-content">
+            <h2>Наша история и философия</h2>
+            <div class="divider" style="margin-left:0"><span class="divider-icon">🌿</span></div>
+            <p>
+              Ферма «Зелёный Изборск» расположена в живописной Изборско-Мальской долине — месте с многовековой историей, чистейшими родниками и плодородной почвой.
+            </p>
+            <p>
+              Мы начали наш путь с идеи вернуть на столы людей настоящий, естественный вкус овощей и ягод. В эпоху массового производства и химических удобрений мы осознанно выбрали путь чистого органического земледелия.
+            </p>
+            <p>
+              Каждая грядка обрабатывается с уважением к природным циклам. Мы не используем синтетические пестициды, нитраты или стимуляторы роста. Наш секрет прост: солнце, свежий изборский воздух, родниковая вода и заботливый ручной труд.
+            </p>
+          </div>
+          <div class="story-image-box">
+            <img 
+              src="https://images.unsplash.com/photo-1500076656116-558758c991c1?w=900&auto=format&fit=crop&q=80" 
+              alt="Поля фермы Зелёный Изборск" 
+              class="story-img"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values Grid -->
+    <section class="section values-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Почему нам доверяют</span>
+          <h2 class="section-title">Наши ключевые принципы</h2>
+          <div class="divider"><span class="divider-icon">🌿</span></div>
+        </div>
+
+        <div class="values-cards-grid">
+          <div class="value-card">
+            <div class="value-card-icon">🌱</div>
+            <h3>100% Органика</h3>
+            <p>Выращиваем овощи и зелень исключительно на естественных био-удобрениях. Никаких химикатов и ГМО.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-card-icon">💧</div>
+            <h3>Родниковый полив</h3>
+            <p>Наши поля орошаются чистейшей водой из подземных ключей Изборской долины.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-card-icon">✋</div>
+            <h3>Ручной сбор</h3>
+            <p>Каждый плод бережно собирается вручную прямо перед отправкой заказчику.</p>
+          </div>
+
+          <div class="value-card">
+            <div class="value-card-icon">🚜</div>
+            <h3>Свежесть дня</h3>
+            <p>Мы не храним продукты на складах — всё поставляется в день сбора прямо с грядки.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo Gallery -->
+    <section class="section gallery-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Атмосфера</span>
+          <h2 class="section-title">Жизнь нашей фермы</h2>
+          <div class="divider"><span class="divider-icon">🌿</span></div>
+        </div>
+
+        <div class="gallery-grid">
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80" alt="Спелые томаты" />
+            <div class="gallery-caption">Спелые томаты на открытом грунте</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1595858169229-373fc3e02d6b?w=600&auto=format&fit=crop&q=80" alt="Свежая зелень" />
+            <div class="gallery-caption">Ароматная зелень с утренней росой</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&auto=format&fit=crop&q=80" alt="Пасека и мёд" />
+            <div class="gallery-caption">Собственная пасека в долине</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Хотите попробовать настоящие фермерские продукты?</h2>
+          <p>Оставьте заявку или звоните нам — мы с удовольствием приготовим свежий заказ для вас!</p>
+          <div class="cta-buttons">
+            <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')">Оставить заявку</button>
+            <a href={`${base}#catalog`} class="btn btn-secondary btn-lg">Смотреть каталог</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <LeadForm />
+</Layout>
+
+<style>
+  .about-page {
+    background-color: var(--color-background);
+  }
+
+  .page-hero {
+    background-color: var(--color-surface-alt);
+    padding: calc(72px + var(--spacing-xl)) 0 var(--spacing-2xl);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-primary);
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h1);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .page-subtitle {
+    font-size: var(--fs-body-lg);
+    color: var(--color-text-muted);
+    max-width: 680px;
+    margin: 0;
+  }
+
+  /* Story */
+  .story-grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .story-grid {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+
+  .story-content h2 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    color: var(--color-text);
+  }
+
+  .story-content p {
+    font-size: var(--fs-body-lg);
+    color: var(--color-text-soft);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .story-img {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  /* Values */
+  .values-section {
+    background-color: var(--color-surface-alt);
+  }
+
+  .values-cards-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 600px) {
+    .values-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .values-cards-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .value-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
+    text-align: center;
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .value-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .value-card-icon {
+    font-size: 2.25rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .value-card h3 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h4);
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .value-card p {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Gallery */
+  .gallery-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gallery-item {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    aspect-ratio: 4 / 3;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .gallery-item:hover img {
+    transform: scale(1.06);
+  }
+
+  .gallery-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background: linear-gradient(transparent, rgba(46,42,38,0.85));
+    color: var(--color-white);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+
+  /* CTA */
+  .cta-section {
+    background-color: var(--color-surface-warm);
+    text-align: center;
+  }
+
+  .cta-box {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .cta-box h2 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    color: var(--color-primary-dark);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .cta-box p {
+    font-size: var(--fs-body-lg);
+    color: var(--color-text-soft);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

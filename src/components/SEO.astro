@@ -1,0 +1,111 @@
+---
+import companyData from '../data/company.json';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article' | 'product';
+  noindex?: boolean;
+  nofollow?: boolean;
+  jsonLd?: Record<string, any> | Array<Record<string, any>>;
+}
+
+const {
+  title,
+  description = companyData.description,
+  canonical,
+  image = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&auto=format&fit=crop&q=80',
+  imageAlt = `${companyData.name} — Ферма в Изборске`,
+  type = 'website',
+  noindex = false,
+  nofollow = false,
+  jsonLd,
+} = Astro.props;
+
+// Site title format
+const formattedTitle = title
+  ? (title.includes(companyData.name) ? title : `${title} | ${companyData.name}`)
+  : `${companyData.name} — Свежие фермерские продукты из Изборска`;
+
+// Canonical URL
+const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site || Astro.url).href;
+
+// Absolute image URL
+const absoluteImageURL = image.startsWith('http')
+  ? image
+  : new URL(image, Astro.site || Astro.url).href;
+
+// Robots directive
+const robotsContent = [
+  noindex ? 'noindex' : 'index',
+  nofollow ? 'nofollow' : 'follow',
+].join(', ');
+
+// Base Schema.org JSON-LD for Farm / LocalBusiness
+const defaultSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Farm',
+  '@id': `${Astro.site || 'https://grekoslav.github.io/green-izborsk'}#farm`,
+  'name': companyData.name,
+  'description': companyData.description,
+  'url': (Astro.site || Astro.url).href,
+  'telephone': companyData.phone,
+  'email': companyData.email,
+  'address': {
+    '@type': 'PostalAddress',
+    'addressLocality': 'Изборск',
+    'addressRegion': 'Псковская область',
+    'addressCountry': 'RU',
+    'streetAddress': companyData.address
+  },
+  'geo': {
+    '@type': 'GeoCoordinates',
+    'latitude': 57.7094,
+    'longitude': 27.8601
+  },
+  'image': absoluteImageURL,
+  'priceRange': '₽₽'
+};
+
+const schemasToRender = jsonLd
+  ? (Array.isArray(jsonLd) ? [defaultSchema, ...jsonLd] : [defaultSchema, jsonLd])
+  : [defaultSchema];
+---
+
+<!-- Primary Meta Tags -->
+<title>{formattedTitle}</title>
+<meta name="title" content={formattedTitle} />
+<meta name="description" content={description} />
+<meta name="robots" content={robotsContent} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={formattedTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={absoluteImageURL} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:site_name" content={companyData.name} />
+<meta property="og:locale" content="ru_RU" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={formattedTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={absoluteImageURL} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- Theme & Mobile -->
+<meta name="theme-color" content="#5c6b3c" />
+<meta name="apple-mobile-web-app-title" content={companyData.name} />
+<meta name="format-detection" content="telephone=no" />
+
+<!-- Schema.org Structured Data -->
+{schemasToRender.map(schema => (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+))}

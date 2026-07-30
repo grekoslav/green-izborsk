@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://grekoslav.github.io/green-izborsk/sitemap.xml

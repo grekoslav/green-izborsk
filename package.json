@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "prebuild": "npm run sitemap",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

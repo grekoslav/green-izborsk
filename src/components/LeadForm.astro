@@ -2,7 +2,7 @@
 ---
 <div class="lead-form-wrapper" id="leadFormModal" aria-hidden="true">
   <div class="lead-form-overlay" id="leadFormOverlay"></div>
-  <div class="lead-form-modal">
+  <div class="lead-form-modal" id="modalContainer">
     <div class="modal-header">
       <div>
         <h3 class="modal-title">Оставить заявку</h3>
@@ -21,23 +21,33 @@
         <span class="selected-name" id="selectedProductName"></span>
       </div>
 
-      <div class="form-group">
-        <label for="name" class="form-label">Ваше имя</label>
-        <input type="text" id="name" name="name" class="form-input" required placeholder="Как к вам обращаться?">
+      <div class="form-group" id="groupName">
+        <label for="name" class="form-label">Ваше имя <span class="required-star">*</span></label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-input" 
+          placeholder="Как к вам обращаться?"
+          aria-describedby="nameError"
+          autocomplete="name"
+        >
+        <span class="form-error" id="nameError" aria-live="polite"></span>
       </div>
       
-      <div class="form-group">
-        <label for="phone" class="form-label">Номер телефона</label>
+      <div class="form-group" id="groupPhone">
+        <label for="phone" class="form-label">Номер телефона <span class="required-star">*</span></label>
         <input 
           type="tel" 
           id="phone" 
           name="phone" 
           class="form-input" 
-          required 
           placeholder="+7 (___) ___-__-__" 
-          pattern="^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$" 
-          title="Введите корректный номер телефона РФ"
+          aria-describedby="phoneError"
+          autocomplete="tel"
+          maxlength="18"
         >
+        <span class="form-error" id="phoneError" aria-live="polite"></span>
       </div>
 
       <div class="form-group">
@@ -45,14 +55,15 @@
         <textarea id="comment" name="comment" class="form-textarea" placeholder="Что хотите заказать? Укажите объём, пожелания..."></textarea>
       </div>
       
-      <div class="form-group">
+      <div class="form-group" id="groupConsent">
         <label class="form-checkbox-container">
-          <input type="checkbox" id="consent" name="consent" class="form-checkbox" required>
+          <input type="checkbox" id="consent" name="consent" class="form-checkbox" aria-describedby="consentError">
           <span>
             Даю согласие на обработку персональных данных 
             (<a href="/privacy" class="privacy-link" target="_blank">соглашение</a>)
           </span>
         </label>
+        <span class="form-error" id="consentError" aria-live="polite"></span>
       </div>
       
       <button type="submit" class="btn btn-accent btn-lg form-submit">Отправить заявку</button>
@@ -62,28 +73,44 @@
       <div class="success-icon">✓</div>
       <h3 class="success-title">Заявка отправлена!</h3>
       <p class="success-text">Мы свяжемся с вами в ближайшее время для уточнения деталей заказа.</p>
-      <button class="btn btn-secondary" onclick="document.getElementById('leadFormModal')?.setAttribute('aria-hidden','true')">Закрыть</button>
+      <button class="btn btn-secondary" id="successCloseBtn">Закрыть</button>
     </div>
   </div>
 </div>
 
 <script>
+  declare global {
+    interface Window {
+      openLeadForm: (productName?: string) => void;
+    }
+  }
+
   const modal = document.getElementById('leadFormModal');
   const overlay = document.getElementById('leadFormOverlay');
   const closeBtn = document.getElementById('leadFormClose');
-  const form = document.getElementById('orderForm') as HTMLFormElement;
+  const successCloseBtn = document.getElementById('successCloseBtn');
+  const modalContainer = document.getElementById('modalContainer');
+  const form = document.getElementById('orderForm') as HTMLFormElement | null;
   const successMsg = document.getElementById('formSuccess');
   const selectedProductEl = document.getElementById('selectedProduct');
   const selectedProductName = document.getElementById('selectedProductName');
   const modalSubtitle = document.getElementById('modalSubtitle');
-  
-  window.openLeadForm = function(productName: string) {
+
+  const nameInput = document.getElementById('name') as HTMLInputElement | null;
+  const phoneInput = document.getElementById('phone') as HTMLInputElement | null;
+  const consentInput = document.getElementById('consent') as HTMLInputElement | null;
+
+  const nameError = document.getElementById('nameError');
+  const phoneError = document.getElementById('phoneError');
+  const consentError = document.getElementById('consentError');
+
+  window.openLeadForm = function(productName?: string) {
     if (modal) {
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
 
-      const inputProd = document.getElementById('formProductName') as HTMLInputElement;
-      if (inputProd) inputProd.value = productName;
+      const inputProd = document.getElementById('formProductName') as HTMLInputElement | null;
+      if (inputProd) inputProd.value = productName || '';
 
       if (productName && selectedProductEl && selectedProductName) {
         selectedProductEl.style.display = 'flex';
@@ -93,14 +120,30 @@
         if (selectedProductEl) selectedProductEl.style.display = 'none';
         if (modalSubtitle) modalSubtitle.textContent = 'Мы перезвоним и обсудим детали заказа';
       }
+
+      // Focus name input on open
+      setTimeout(() => nameInput?.focus(), 100);
     }
+  };
+
+  const clearFormErrors = () => {
+    [nameInput, phoneInput, consentInput].forEach(input => {
+      input?.classList.remove('is-invalid');
+    });
+    if (nameError) nameError.textContent = '';
+    if (phoneError) phoneError.textContent = '';
+    if (consentError) consentError.textContent = '';
   };
 
   const closeModal = () => {
     if (modal) {
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      if (form) { form.reset(); form.style.display = 'block'; }
+      clearFormErrors();
+      if (form) { 
+        form.reset(); 
+        form.style.display = 'block'; 
+      }
       if (successMsg) successMsg.style.display = 'none';
       if (selectedProductEl) selectedProductEl.style.display = 'none';
     }
@@ -108,6 +151,7 @@
 
   if (overlay) overlay.addEventListener('click', closeModal);
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (successCloseBtn) successCloseBtn.addEventListener('click', closeModal);
 
   // Close on Escape
   document.addEventListener('keydown', (e) => {
@@ -115,11 +159,172 @@
       closeModal();
     }
   });
-  
+
+  // ─── Phone Mask & Validation Helper ───
+  function formatRussianPhone(val: string): string {
+    // Extract raw digits
+    let digits = val.replace(/\D/g, '');
+
+    if (!digits) return '';
+
+    // Handle leading digits (8, 7, or 9)
+    if (digits.startsWith('8')) {
+      digits = '7' + digits.slice(1);
+    } else if (!digits.startsWith('7')) {
+      digits = '7' + digits;
+    }
+
+    // Cap at 11 digits total (+7 + 10 national digits)
+    digits = digits.substring(0, 11);
+
+    let result = '+7';
+    if (digits.length > 1) {
+      result += ' (' + digits.substring(1, Math.min(4, digits.length));
+    }
+    if (digits.length >= 4) {
+      result += ') ' + digits.substring(4, Math.min(7, digits.length));
+    }
+    if (digits.length >= 7) {
+      result += '-' + digits.substring(7, Math.min(9, digits.length));
+    }
+    if (digits.length >= 9) {
+      result += '-' + digits.substring(9, 11);
+    }
+
+    return result;
+  }
+
+  // Validate Name
+  function validateName(): boolean {
+    if (!nameInput || !nameError) return true;
+    const value = nameInput.value.trim();
+    if (!value) {
+      nameInput.classList.add('is-invalid');
+      nameError.textContent = 'Пожалуйста, укажите ваше имя';
+      return false;
+    }
+    if (value.length < 2) {
+      nameInput.classList.add('is-invalid');
+      nameError.textContent = 'Имя должно содержать минимум 2 символа';
+      return false;
+    }
+    nameInput.classList.remove('is-invalid');
+    nameError.textContent = '';
+    return true;
+  }
+
+  // Validate Phone
+  function validatePhone(): boolean {
+    if (!phoneInput || !phoneError) return true;
+    const rawVal = phoneInput.value;
+    const digits = rawVal.replace(/\D/g, '');
+
+    if (!digits) {
+      phoneInput.classList.add('is-invalid');
+      phoneError.textContent = 'Пожалуйста, укажите номер телефона';
+      return false;
+    }
+
+    if (digits.length < 11) {
+      phoneInput.classList.add('is-invalid');
+      phoneError.textContent = 'Введите полный номер: +7 (XXX) XXX-XX-XX';
+      return false;
+    }
+
+    // Check operator code (second digit in 11-digit string)
+    const operatorCode = digits[1];
+    // Valid Russian codes start with 3, 4, 8, 9 (mobile numbers start with 9, landlines 3, 4, 8)
+    if (!['3', '4', '8', '9'].includes(operatorCode)) {
+      phoneInput.classList.add('is-invalid');
+      phoneError.textContent = 'Проверьте код оператора/города (+7 9XX...)';
+      return false;
+    }
+
+    phoneInput.classList.remove('is-invalid');
+    phoneError.textContent = '';
+    return true;
+  }
+
+  // Validate Consent
+  function validateConsent(): boolean {
+    if (!consentInput || !consentError) return true;
+    if (!consentInput.checked) {
+      consentInput.classList.add('is-invalid');
+      consentError.textContent = 'Подтвердите согласие на обработку данных';
+      return false;
+    }
+    consentInput.classList.remove('is-invalid');
+    consentError.textContent = '';
+    return true;
+  }
+
+  // Live Phone Input Handling
+  if (phoneInput) {
+    phoneInput.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      const formatted = formatRussianPhone(target.value);
+      target.value = formatted;
+
+      if (phoneInput.classList.contains('is-invalid')) {
+        validatePhone();
+      }
+    });
+
+    phoneInput.addEventListener('blur', () => {
+      if (phoneInput.value.length > 0) {
+        validatePhone();
+      }
+    });
+  }
+
+  // Live Name Input Handling
+  if (nameInput) {
+    nameInput.addEventListener('input', () => {
+      if (nameInput.classList.contains('is-invalid')) {
+        validateName();
+      }
+    });
+    nameInput.addEventListener('blur', () => {
+      if (nameInput.value.length > 0) {
+        validateName();
+      }
+    });
+  }
+
+  // Live Consent Input Handling
+  if (consentInput) {
+    consentInput.addEventListener('change', () => {
+      if (consentInput.classList.contains('is-invalid')) {
+        validateConsent();
+      }
+    });
+  }
+
+  // Form Submit Handler
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      // In production, send data to an API here
+
+      const isNameValid = validateName();
+      const isPhoneValid = validatePhone();
+      const isConsentValid = validateConsent();
+
+      if (!isNameValid || !isPhoneValid || !isConsentValid) {
+        // Shake modal container on error
+        if (modalContainer) {
+          modalContainer.classList.remove('shake');
+          void modalContainer.offsetWidth; // trigger reflow
+          modalContainer.classList.add('shake');
+        }
+
+        // Focus first invalid field
+        if (!isNameValid) nameInput?.focus();
+        else if (!isPhoneValid) phoneInput?.focus();
+        else if (!isConsentValid) consentInput?.focus();
+        return;
+      }
+
+      // Success flow
       form.style.display = 'none';
       if (successMsg) successMsg.style.display = 'flex';
     });
@@ -232,6 +437,41 @@
   .selected-name {
     font-weight: 600;
     color: var(--color-primary);
+  }
+
+  .required-star {
+    color: var(--color-error);
+    font-weight: 600;
+  }
+
+  .form-error {
+    display: block;
+    color: var(--color-error);
+    font-size: var(--fs-xs);
+    margin-top: 0.35rem;
+    line-height: 1.3;
+  }
+
+  .form-input.is-invalid {
+    border-color: var(--color-error) !important;
+    background-color: rgba(184, 66, 51, 0.03);
+    box-shadow: 0 0 0 3px rgba(184, 66, 51, 0.12) !important;
+  }
+
+  .form-checkbox.is-invalid {
+    outline: 2px solid var(--color-error);
+    outline-offset: 1px;
+  }
+
+  .lead-form-modal.shake {
+    animation: modalShake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+
+  @keyframes modalShake {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
   }
 
   .optional {

@@ -1,0 +1,374 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LeadForm from '../components/LeadForm.astro';
+import companyData from '../data/company.json';
+
+const base = import.meta.env.BASE_URL;
+
+const contactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  'name': `Контакты — ${companyData.name}`,
+  'description': 'Контактная информация фермы Зелёный Изборск. Телефон, адрес, электронная почта и схема проезда.',
+  'url': `${Astro.site || ''}${base}contacts/`
+};
+---
+
+<Layout 
+  title={`Контакты — ${companyData.name}`}
+  description="Контакты фермы «Зелёный Изборск». Звоните, пишите или приезжайте в гости за свежими натуральными продуктами."
+  jsonLd={contactSchema}
+>
+  <Header />
+
+  <main class="contacts-page">
+    <!-- Hero Header -->
+    <section class="page-hero">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Хлебные крошки">
+          <a href={base}>Главная</a>
+          <span class="sep">/</span>
+          <span class="current">Контакты</span>
+        </nav>
+
+        <span class="section-label">Всегда на связи</span>
+        <h1 class="page-title">Контакты фермы</h1>
+        <p class="page-subtitle">
+          Мы всегда рады общению! Позвоните нам, напишите на почту или заезжайте в Изборск за свежим урожаем.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contacts Main Grid -->
+    <section class="section contacts-section">
+      <div class="container">
+        <div class="contacts-grid">
+          <!-- Info Column -->
+          <div class="contact-cards">
+            <div class="contact-card">
+              <div class="card-icon">📞</div>
+              <div class="card-info">
+                <h3>Телефон</h3>
+                <p>Звоните для вопросов и заказа:</p>
+                <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="contact-link phone-highlight">
+                  {companyData.phone}
+                </a>
+                <span class="sub-text">Принимаем звонки с 8:00 до 20:00 без выходных</span>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="card-icon">✉️</div>
+              <div class="card-info">
+                <h3>Электронная почта</h3>
+                <p>По вопросам сотрудничества и оптовых заказов:</p>
+                <a href={`mailto:${companyData.email}`} class="contact-link">
+                  {companyData.email}
+                </a>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="card-icon">📍</div>
+              <div class="card-info">
+                <h3>Адрес и локация</h3>
+                <p>Наше хозяйство находится в Псковской области:</p>
+                <address class="contact-address">
+                  {companyData.address}
+                </address>
+                <span class="sub-text">Изборская долина, Печорский район</span>
+              </div>
+            </div>
+
+            <div class="contact-card">
+              <div class="card-icon">🚗</div>
+              <div class="card-info">
+                <h3>Как добраться</h3>
+                <p>
+                  От Пскова — 30 км по трассе А212 в сторону Печор. После въезда в Изборск следуйте по указателям к фермерским хозяйствам долины.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Direct Order Block -->
+          <div class="contacts-form-box">
+            <div class="form-box-inner">
+              <span class="section-label">Быстрая связь</span>
+              <h2>Оставить заявку на заказ</h2>
+              <p>Заполните форму, и мы свяжемся с вами в течение 15 минут для уточнения наличия и времени доставки.</p>
+              
+              <div class="action-wrap">
+                <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')" style="width: 100%">
+                  Заполнить заявку
+                </button>
+                <div class="or-divider"><span>или свяжитесь напрямую</span></div>
+                <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="btn btn-secondary btn-lg" style="width: 100%">
+                  📞 Позвонить сейчас
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Map Info Card -->
+    <section class="section map-section">
+      <div class="container">
+        <div class="map-card">
+          <div class="map-header">
+            <div>
+              <span class="section-label">География</span>
+              <h2>Ферма в Изборской долине</h2>
+            </div>
+            <a 
+              href={`https://yandex.ru/maps/?text=${encodeURIComponent(companyData.address)}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="btn btn-primary"
+            >
+              Открыть на Яндекс.Картах ↗
+            </a>
+          </div>
+          
+          <div class="map-placeholder">
+            <div class="map-placeholder-content">
+              <span class="map-icon">🌾</span>
+              <h3>Псковская область, Печорский район, Изборск</h3>
+              <p>Чистейший воздух, заповедные луга и уникальный микроклимат Изборско-Мальской долины.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <LeadForm />
+</Layout>
+
+<style>
+  .contacts-page {
+    background-color: var(--color-background);
+  }
+
+  .page-hero {
+    background-color: var(--color-surface-alt);
+    padding: calc(72px + var(--spacing-xl)) 0 var(--spacing-2xl);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-primary);
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h1);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .page-subtitle {
+    font-size: var(--fs-body-lg);
+    color: var(--color-text-muted);
+    max-width: 680px;
+    margin: 0;
+  }
+
+  /* Main Grid */
+  .contacts-grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+  }
+
+  @media (min-width: 900px) {
+    .contacts-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: start;
+    }
+  }
+
+  /* Cards */
+  .contact-cards {
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .contact-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast);
+  }
+
+  .contact-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-info h3 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h4);
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+  }
+
+  .card-info p {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-link {
+    display: inline-block;
+    font-size: var(--fs-body-lg);
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+  }
+
+  .contact-link:hover {
+    color: var(--color-accent);
+  }
+
+  .phone-highlight {
+    font-size: 1.35rem;
+    color: var(--color-accent);
+  }
+
+  .contact-address {
+    font-style: normal;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .sub-text {
+    display: block;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* Form box */
+  .contacts-form-box {
+    background-color: var(--color-surface-warm);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+  }
+
+  .form-box-inner h2 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    color: var(--color-primary-dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-box-inner p {
+    font-size: var(--fs-small);
+    color: var(--color-text-soft);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+
+  .action-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .or-divider {
+    text-align: center;
+    position: relative;
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+    margin: 0.25rem 0;
+  }
+
+  /* Map section */
+  .map-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .map-header h2 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    color: var(--color-text);
+  }
+
+  .map-placeholder {
+    background-color: var(--color-surface-alt);
+    border: 2px dashed var(--color-wheat);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    text-align: center;
+  }
+
+  .map-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .map-placeholder-content h3 {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h4);
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .map-placeholder-content p {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+</style>

@@ -12,10 +12,10 @@ const base = import.meta.env.BASE_URL;
     </a>
 
     <nav class="nav" aria-label="Основная навигация">
-      <a href="#catalog" class="nav-link">Продукция</a>
-      <a href="#about" class="nav-link">О ферме</a>
-      <a href="#how-to-order" class="nav-link">Как заказать</a>
-      <a href="#contacts" class="nav-link">Контакты</a>
+      <a href={`${base}#catalog`} class="nav-link">Продукция</a>
+      <a href={`${base}about`} class="nav-link">О ферме</a>
+      <a href={`${base}#how-to-order`} class="nav-link">Как заказать</a>
+      <a href={`${base}contacts`} class="nav-link">Контакты</a>
     </nav>
 
     <div class="header-actions">
@@ -36,10 +36,10 @@ const base = import.meta.env.BASE_URL;
   <!-- Mobile menu -->
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
     <nav class="mobile-nav">
-      <a href="#catalog" class="mobile-nav-link">Продукция</a>
-      <a href="#about" class="mobile-nav-link">О ферме</a>
-      <a href="#how-to-order" class="mobile-nav-link">Как заказать</a>
-      <a href="#contacts" class="mobile-nav-link">Контакты</a>
+      <a href={`${base}#catalog`} class="mobile-nav-link">Продукция</a>
+      <a href={`${base}about`} class="mobile-nav-link">О ферме</a>
+      <a href={`${base}#how-to-order`} class="mobile-nav-link">Как заказать</a>
+      <a href={`${base}contacts`} class="mobile-nav-link">Контакты</a>
     </nav>
     <div class="mobile-actions">
       <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="btn btn-secondary btn-lg" style="width:100%">

@@ -33,7 +33,7 @@ const { id, name, price, description, image, inStock, category } = Astro.props;
       </span>
       <button 
         class="btn btn-secondary card-btn" 
-        onclick={`window.openLeadForm('${name}')`}
+        onclick={`window.openLeadForm('${name.replace(/'/g, "\\'")}')`}
       >
         Заказать
       </button>

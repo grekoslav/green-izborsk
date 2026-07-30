@@ -7,10 +7,36 @@ import About from '../components/About.astro';
 import HowToOrder from '../components/HowToOrder.astro';
 import Footer from '../components/Footer.astro';
 import LeadForm from '../components/LeadForm.astro';
-import productsData from '../data/products.json';
+import companyData from '../data/company.json';
+import { fetchProductsFromGoogleSheets } from '../utils/googleSheets';
+
+const productsData = await fetchProductsFromGoogleSheets(companyData.googleSheetUrl);
+
+const catalogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  'name': 'Каталог продукции фермы «Зелёный Изборск»',
+  'itemListElement': productsData.map((product, index) => ({
+    '@type': 'ListItem',
+    'position': index + 1,
+    'item': {
+      '@type': 'Product',
+      'name': product.name,
+      'description': product.description,
+      'image': product.image,
+      'offers': {
+        '@type': 'Offer',
+        'priceCurrency': 'RUB',
+        'availability': product.inStock 
+          ? 'https://schema.org/InStock' 
+          : 'https://schema.org/LimitedAvailability'
+      }
+    }
+  }))
+};
 ---
 
-<Layout>
+<Layout jsonLd={catalogSchema}>
   <Header />
   
   <main>
