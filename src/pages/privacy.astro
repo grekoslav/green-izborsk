@@ -1,10 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LeadForm from '../components/LeadForm.astro';
 import companyData from '../data/company.json';
+
+const base = import.meta.env.BASE_URL;
 ---
 
-<Layout title={`Пользовательское соглашение - ${companyData.name}`}>
+<Layout title={`Пользовательское соглашение — ${companyData.name}`}>
   <Header />
   
   <main class="privacy-page section">
@@ -74,75 +78,93 @@ import companyData from '../data/company.json';
         </div>
         
         <div class="actions">
-          <a href="/" class="btn btn-secondary">Вернуться на главную</a>
+          <a href={base} class="btn btn-secondary">← Вернуться на главную</a>
         </div>
       </div>
     </div>
   </main>
+
+  <Footer />
+  <LeadForm />
 </Layout>
 
 <style>
   .privacy-page {
     background-color: var(--color-background);
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 72px);
   }
   
   .content-box {
-    background-color: var(--color-surface-container-lowest);
-    padding: 48px;
+    background-color: var(--color-surface);
+    padding: var(--spacing-2xl);
     border-radius: var(--radius-lg);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow-sm);
     max-width: 900px;
     margin: 0 auto;
+    border: 1px solid var(--color-border-light);
+  }
+
+  @media (max-width: 600px) {
+    .content-box {
+      padding: var(--spacing-md);
+    }
   }
   
   .page-title {
-    font-size: var(--font-size-display-lg);
-    color: var(--color-primary);
-    margin-bottom: 16px;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h2);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
     line-height: 1.2;
   }
   
   .last-updated {
-    color: var(--color-on-surface-variant);
-    font-size: var(--font-size-body-md);
-    margin-bottom: 48px;
-    border-bottom: 1px solid var(--color-surface-container);
-    padding-bottom: 24px;
+    color: var(--color-text-muted);
+    font-size: var(--fs-small);
+    margin-bottom: var(--spacing-2xl);
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: var(--spacing-md);
   }
   
   .legal-text {
-    color: var(--color-on-surface);
-    font-size: var(--font-size-body-lg);
+    color: var(--color-text-soft);
+    font-size: var(--fs-body);
+    line-height: 1.7;
   }
   
   .legal-text h2 {
-    font-size: var(--font-size-title-lg);
-    color: var(--color-secondary);
-    margin: 40px 0 16px;
+    font-family: var(--font-serif);
+    font-size: var(--fs-h3);
+    color: var(--color-primary);
+    margin: var(--spacing-xl) 0 var(--spacing-sm);
   }
   
   .legal-text p {
-    margin-bottom: 16px;
+    margin-bottom: var(--spacing-sm);
   }
   
   .legal-text ul {
-    margin-bottom: 24px;
-    padding-left: 24px;
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-md);
   }
   
   .legal-text li {
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
   
   .legal-text a {
     color: var(--color-primary);
     text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal-text a:hover {
+    color: var(--color-accent);
   }
   
   .actions {
-    margin-top: 64px;
-    padding-top: 24px;
-    border-top: 1px solid var(--color-surface-container);
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border-light);
   }
 </style>

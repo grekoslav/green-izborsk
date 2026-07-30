@@ -12,116 +12,180 @@ export interface Props {
 const { id, name, price, description, image, inStock, category } = Astro.props;
 ---
 
-<div class="product-card">
+<article class="product-card">
   <div class="card-image-wrapper">
     <img src={image} alt={name} class="card-image" loading="lazy" />
     <span class="card-category">{category}</span>
+    {!inStock && <span class="card-seasonal">Сезонный</span>}
   </div>
   
-  <div class="card-content">
-    <h3 class="card-title">{name}</h3>
-    <p class="card-price">{price}</p>
+  <div class="card-body">
+    <div class="card-info">
+      <h3 class="card-title">{name}</h3>
+      <p class="card-price">{price}</p>
+    </div>
     <p class="card-description">{description}</p>
     
-    <div class="card-status">
-      {inStock ? (
-        <span class="status in-stock">В наличии</span>
-      ) : (
-        <span class="status out-of-stock">Под заказ</span>
-      )}
+    <div class="card-footer">
+      <span class={`card-status ${inStock ? 'is-available' : 'is-seasonal'}`}>
+        <span class="status-dot"></span>
+        {inStock ? 'В наличии' : 'Под заказ'}
+      </span>
+      <button 
+        class="btn btn-secondary card-btn" 
+        onclick={`window.openLeadForm('${name}')`}
+      >
+        Заказать
+      </button>
     </div>
-    
-    <button class="btn btn-secondary card-btn" onclick={`window.openLeadForm('${name}')`}>
-      Оставить заявку
-    </button>
   </div>
-</div>
+</article>
 
 <style>
   .product-card {
-    background-color: var(--color-surface-container-lowest);
+    background-color: var(--color-surface);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--color-surface-container);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--color-border-light);
+    transition: transform var(--transition-med), box-shadow var(--transition-med);
   }
-  
+
   .product-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
   }
-  
+
   .card-image-wrapper {
     position: relative;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
   }
-  
+
   .card-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform var(--transition-slow);
   }
-  
+
+  .product-card:hover .card-image {
+    transform: scale(1.05);
+  }
+
   .card-category {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background-color: var(--color-surface-container-lowest);
+    top: 0.75rem;
+    left: 0.75rem;
+    background-color: var(--color-surface);
     color: var(--color-primary);
-    padding: 4px 12px;
-    border-radius: var(--radius-full);
-    font-size: var(--font-size-label-lg);
-    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    box-shadow: var(--shadow-sm);
   }
-  
-  .card-content {
-    padding: 24px;
+
+  .card-seasonal {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+  }
+
+  .card-body {
+    padding: var(--spacing-md);
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    gap: 0.75rem;
   }
-  
+
+  .card-info {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
   .card-title {
-    font-size: var(--font-size-title-lg);
-    margin-bottom: 8px;
-  }
-  
-  .card-price {
-    font-size: var(--font-size-body-lg);
+    font-family: var(--font-serif);
+    font-size: var(--fs-h4);
     font-weight: 600;
-    color: var(--color-primary);
-    margin-bottom: 16px;
+    color: var(--color-text);
+    line-height: 1.3;
   }
-  
+
+  .card-price {
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    color: var(--color-accent);
+    white-space: nowrap;
+    margin: 0;
+  }
+
   .card-description {
-    font-size: var(--font-size-body-md);
-    color: var(--color-on-surface-variant);
-    margin-bottom: 24px;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--color-text-muted);
     flex-grow: 1;
+    margin: 0;
   }
-  
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border-light);
+    margin-top: auto;
+  }
+
   .card-status {
-    margin-bottom: 24px;
-  }
-  
-  .status {
-    font-size: var(--font-size-label-lg);
-    padding: 4px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--fs-xs);
     font-weight: 500;
   }
-  
-  .in-stock {
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .is-available {
     color: var(--color-primary);
   }
-  
-  .out-of-stock {
-    color: var(--color-outline);
+
+  .is-available .status-dot {
+    background-color: var(--color-primary);
   }
-  
+
+  .is-seasonal {
+    color: var(--color-text-muted);
+  }
+
+  .is-seasonal .status-dot {
+    background-color: var(--color-wheat);
+  }
+
   .card-btn {
-    width: 100%;
+    padding: 0.5rem 1.1rem;
+    font-size: var(--fs-xs);
+    flex-shrink: 0;
   }
 </style>

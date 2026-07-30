@@ -1,0 +1,171 @@
+---
+---
+
+<section id="about" class="about section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-images">
+        <div class="about-img-main">
+          <img 
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?w=800&auto=format&fit=crop&q=80" 
+            alt="Наша ферма в Изборске" 
+            loading="lazy" 
+          />
+        </div>
+        <div class="about-img-accent">
+          <img 
+            src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&auto=format&fit=crop&q=80" 
+            alt="Свежие овощи с грядки" 
+            loading="lazy" 
+          />
+        </div>
+      </div>
+
+      <div class="about-content">
+        <span class="section-label">Наша история</span>
+        <h2 class="section-title" style="text-align:left">О ферме «Зелёный Изборск»</h2>
+        <div class="divider" style="margin-left:0; margin-right:auto"><span class="divider-icon">🌿</span></div>
+
+        <p class="about-text">
+          Мы находимся в самом сердце Изборской долины — одном из красивейших 
+          и экологически чистых уголков Псковской области.
+        </p>
+        <p class="about-text">
+          Наша философия проста: выращивать продукты так, как это делали наши предки — 
+          без химии, с заботой о земле и здоровье людей. Каждый овощ и каждый пучок 
+          зелени — это результат кропотливого ручного труда.
+        </p>
+
+        <div class="about-values">
+          <div class="value-item">
+            <span class="value-icon">🌾</span>
+            <div>
+              <strong>Без химикатов</strong>
+              <span>Только органические удобрения</span>
+            </div>
+          </div>
+          <div class="value-item">
+            <span class="value-icon">✋</span>
+            <div>
+              <strong>Ручной труд</strong>
+              <span>Каждый продукт — с заботой</span>
+            </div>
+          </div>
+          <div class="value-item">
+            <span class="value-icon">📍</span>
+            <div>
+              <strong>Свежесть</strong>
+              <span>С грядки — к вашему столу</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    background-color: var(--color-background);
+  }
+
+  .about-grid {
+    display: grid;
+    gap: var(--spacing-2xl);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-3xl);
+    }
+  }
+
+  .about-images {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 0.65fr;
+    gap: var(--spacing-sm);
+    align-items: end;
+  }
+
+  .about-img-main {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .about-img-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about-img-accent {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 1;
+    border: 4px solid var(--color-cream);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2rem);
+  }
+
+  .about-img-accent img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about-content {
+    max-width: 520px;
+  }
+
+  .about-text {
+    font-size: var(--fs-body-lg);
+    color: var(--color-text-soft);
+    line-height: 1.8;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .about-values {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .value-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .value-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+  }
+
+  .value-item strong {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: var(--fs-body);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .value-item span:not(.value-icon) {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+  }
+</style>

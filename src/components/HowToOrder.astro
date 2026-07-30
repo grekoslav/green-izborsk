@@ -1,0 +1,197 @@
+---
+import companyData from '../data/company.json';
+---
+
+<section id="how-to-order" class="how-to-order section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Просто и удобно</span>
+      <h2 class="section-title">Как заказать</h2>
+      <div class="divider"><span class="divider-icon">🌿</span></div>
+      <p class="section-subtitle">
+        У нас нет корзины и онлайн-оплаты — мы работаем по-домашнему. 
+        Свяжитесь с нами удобным способом.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-icon">📞</div>
+        <h3 class="step-title">Позвоните или оставьте заявку</h3>
+        <p class="step-text">
+          Свяжитесь с нами по телефону 
+          <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="step-link">{companyData.phone}</a> 
+          или заполните форму на сайте.
+        </p>
+      </div>
+
+      <div class="step-connector" aria-hidden="true">
+        <svg width="40" height="24" viewBox="0 0 40 24" fill="none">
+          <path d="M0 12h32m0 0l-6-6m6 6l-6 6" stroke="var(--color-wheat)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-icon">🤝</div>
+        <h3 class="step-title">Обсудим детали</h3>
+        <p class="step-text">
+          Мы перезвоним, уточним объём заказа, выберем удобное время и способ получения.
+        </p>
+      </div>
+
+      <div class="step-connector" aria-hidden="true">
+        <svg width="40" height="24" viewBox="0 0 40 24" fill="none">
+          <path d="M0 12h32m0 0l-6-6m6 6l-6 6" stroke="var(--color-wheat)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-icon">📦</div>
+        <h3 class="step-title">Получите свежие продукты</h3>
+        <p class="step-text">
+          Заберите заказ на ферме или мы доставим — договоримся индивидуально.
+        </p>
+      </div>
+    </div>
+
+    <div class="order-cta">
+      <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')">Оставить заявку</button>
+      <span class="cta-or">или</span>
+      <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="cta-phone">
+        📞 {companyData.phone}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-to-order {
+    background-color: var(--color-surface-alt);
+  }
+
+  .steps-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  @media (min-width: 900px) {
+    .steps-grid {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+    }
+  }
+
+  .step-card {
+    position: relative;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
+    text-align: center;
+    max-width: 320px;
+    width: 100%;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .step-number {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    font-family: var(--font-serif);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    line-height: 1;
+  }
+
+  .step-title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-h4);
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+  }
+
+  .step-text {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .step-link {
+    color: var(--color-primary);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .step-link:hover {
+    color: var(--color-accent);
+  }
+
+  .step-connector {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .step-connector {
+      display: flex;
+      align-items: center;
+      padding: 2.5rem 0.75rem 0;
+      flex-shrink: 0;
+    }
+  }
+
+  /* CTA block */
+  .order-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .cta-or {
+    font-size: var(--fs-small);
+    color: var(--color-text-muted);
+  }
+
+  .cta-phone {
+    font-family: var(--font-sans);
+    font-size: var(--fs-body-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    white-space: nowrap;
+    transition: color var(--transition-fast);
+  }
+
+  .cta-phone:hover {
+    color: var(--color-primary);
+  }
+</style>
