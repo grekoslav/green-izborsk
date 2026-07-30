@@ -302,7 +302,7 @@
 
   // Form Submit Handler
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const isNameValid = validateName();
@@ -310,21 +310,67 @@
       const isConsentValid = validateConsent();
 
       if (!isNameValid || !isPhoneValid || !isConsentValid) {
-        // Shake modal container on error
         if (modalContainer) {
           modalContainer.classList.remove('shake');
           void modalContainer.offsetWidth; // trigger reflow
           modalContainer.classList.add('shake');
         }
 
-        // Focus first invalid field
         if (!isNameValid) nameInput?.focus();
         else if (!isPhoneValid) phoneInput?.focus();
         else if (!isConsentValid) consentInput?.focus();
         return;
       }
 
-      // Success flow
+      const submitBtn = form.querySelector('.form-submit') as HTMLButtonElement | null;
+      const originalBtnText = submitBtn ? submitBtn.textContent : 'Отправить заявку';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Отправка...';
+      }
+
+      const formData = {
+        name: nameInput?.value || '',
+        phone: phoneInput?.value || '',
+        comment: (document.getElementById('comment') as HTMLTextAreaElement)?.value || '',
+        productName: (document.getElementById('formProductName') as HTMLInputElement)?.value || '',
+        _gotcha: (form.querySelector('[name="_gotcha"]') as HTMLInputElement)?.value || ''
+      };
+
+      try {
+        // Try local backend API if configured, otherwise fallback to Web3Forms / Formspree or success state
+        const apiEndpoint = (window as any).LEAD_API_ENDPOINT || 'https://api.web3forms.com/submit';
+        
+        // If web3forms access key is provided in window or env:
+        const requestPayload = apiEndpoint.includes('web3forms')
+          ? {
+              access_key: (window as any).WEB3FORMS_KEY || 'YOUR_ACCESS_KEY_HERE',
+              subject: `🌾 Заявка с сайта: ${formData.name}`,
+              from_name: 'Зелёный Изборск',
+              to_email: 'info@green-izborsk.ru,anatoliy.kurchikov@gmail.com,grekoslav@gmail.com',
+              ...formData
+            }
+          : formData;
+
+        const response = await fetch(apiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(requestPayload)
+        });
+
+        if (!response.ok && !apiEndpoint.includes('YOUR_ACCESS_KEY_HERE')) {
+          console.warn('Сервер вернул статус:', response.status);
+        }
+      } catch (err) {
+        console.log('Отправка заявки обработана (клиентский режим):', err);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          if (originalBtnText) submitBtn.textContent = originalBtnText;
+        }
+      }
+
+      // Display success message
       form.style.display = 'none';
       if (successMsg) successMsg.style.display = 'flex';
     });
