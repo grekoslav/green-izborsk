@@ -14,6 +14,10 @@
     </div>
     
     <form class="lead-form" id="orderForm" novalidate>
+      <input type="hidden" name="access_key" value="68e342cd-264a-4e52-83ad-a51e7d91b781">
+      <input type="hidden" name="subject" value="🌾 Новая заявка с сайта Зелёный Изборск">
+      <input type="hidden" name="from_name" value="Зелёный Изборск">
+      <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
       <input type="hidden" name="productName" id="formProductName" value="">
       
       <div id="selectedProduct" class="selected-product" style="display:none">
@@ -329,40 +333,22 @@
         submitBtn.textContent = 'Отправка...';
       }
 
-      const formData = {
-        name: nameInput?.value || '',
-        phone: phoneInput?.value || '',
-        comment: (document.getElementById('comment') as HTMLTextAreaElement)?.value || '',
-        productName: (document.getElementById('formProductName') as HTMLInputElement)?.value || '',
-        _gotcha: (form.querySelector('[name="_gotcha"]') as HTMLInputElement)?.value || ''
-      };
-
       try {
-        // Try local backend API if configured, otherwise fallback to Web3Forms / Formspree or success state
-        const apiEndpoint = (window as any).LEAD_API_ENDPOINT || 'https://api.web3forms.com/submit';
-        
-        // If web3forms access key is provided in window or env:
-        const requestPayload = apiEndpoint.includes('web3forms')
-          ? {
-              access_key: (window as any).WEB3FORMS_KEY || 'YOUR_ACCESS_KEY_HERE',
-              subject: `🌾 Заявка с сайта: ${formData.name}`,
-              from_name: 'Зелёный Изборск',
-              to_email: 'info@green-izborsk.ru,anatoliy.kurchikov@gmail.com,grekoslav@gmail.com',
-              ...formData
-            }
-          : formData;
-
-        const response = await fetch(apiEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify(requestPayload)
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          body: new FormData(form),
         });
 
-        if (!response.ok && !apiEndpoint.includes('YOUR_ACCESS_KEY_HERE')) {
-          console.warn('Сервер вернул статус:', response.status);
+        const data = await response.json();
+        if (data.success) {
+          form.style.display = 'none';
+          if (successMsg) successMsg.style.display = 'flex';
+        } else {
+          alert(data.message || 'Произошла ошибка при отправке заявки.');
         }
       } catch (err) {
-        console.log('Отправка заявки обработана (клиентский режим):', err);
+        console.error('Ошибка отправки формы Web3Forms:', err);
+        alert('Сетевая ошибка при отправке. Пожалуйста, попробуйте еще раз.');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
