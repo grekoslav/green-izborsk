@@ -115,7 +115,7 @@ function getProductFallbackImage(name: string, category: string): string {
   const text = `${name} ${category}`.toLowerCase();
   
   if (text.includes('мед') || text.includes('мёд')) {
-    return 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80';
+    return '/images/honey.jpg';
   }
   if (text.includes('картофель') || text.includes('картошка')) {
     return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&auto=format&fit=crop&q=80';
