@@ -109,6 +109,37 @@ export function formatCsvUrl(sheetUrlOrId: string): string {
 }
 
 /**
+ * Returns a relevant fallback photo based on product name/category if missing in Google Sheets
+ */
+function getProductFallbackImage(name: string, category: string): string {
+  const text = `${name} ${category}`.toLowerCase();
+  
+  if (text.includes('мед') || text.includes('мёд')) {
+    return 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80';
+  }
+  if (text.includes('картофель') || text.includes('картошка')) {
+    return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&auto=format&fit=crop&q=80';
+  }
+  if (text.includes('капуста')) {
+    return 'https://images.unsplash.com/photo-1695089028077-5e7949d238d3?q=80&w=1412&auto=format&fit=crop&ixlib=rb-4.1.0';
+  }
+  if (text.includes('томат') || text.includes('помидор')) {
+    return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop&q=80';
+  }
+  if (text.includes('зелень') || text.includes('петрушка') || text.includes('укроп')) {
+    return 'https://images.unsplash.com/photo-1595858169229-373fc3e02d6b?w=800&auto=format&fit=crop&q=80';
+  }
+  if (text.includes('огур')) {
+    return 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=800&auto=format&fit=crop&q=80';
+  }
+  if (text.includes('клубник') || text.includes('ягод')) {
+    return 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&auto=format&fit=crop&q=80';
+  }
+  
+  return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop&q=80';
+}
+
+/**
  * Fetch products from a published Google Sheet CSV URL or Spreadsheet ID
  */
 export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Promise<Product[]> {
@@ -137,7 +168,11 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
       const name = getColValue(row, ['name', 'название', 'наименование', 'продукт']) || `Товар #${index + 1}`;
       const price = getColValue(row, ['price', 'цена', 'стоимость']) || 'По запросу';
       const description = getColValue(row, ['description', 'описание']) || '';
-      const image = getColValue(row, ['image', 'картинка', 'изображение', 'фото']) || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop&q=80';
+      
+      let image = getColValue(row, ['image', 'картинка', 'изображение', 'фото']);
+      if (!image || !image.trim()) {
+        image = getProductFallbackImage(name, category);
+      }
       
       const stockRaw = getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']).toLowerCase();
       const inStock = stockRaw.includes('да') || stockRaw.includes('true') || stockRaw.includes('1') || stockRaw.includes('в наличии') || stockRaw === 'есть';
