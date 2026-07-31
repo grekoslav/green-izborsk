@@ -1,230 +1,258 @@
 ---
-import companyData from '../data/company.json';
+import companyData from "../data/company.json";
 ---
 
 <section class="hero" id="hero">
-  <div class="hero-bg">
-    <img 
-      src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&auto=format&fit=crop&q=80" 
-      alt="Поля Изборской долины" 
-      class="hero-bg-image"
-      loading="eager"
-    />
-    <div class="hero-overlay"></div>
-  </div>
-
-  <div class="container hero-container">
-    <div class="hero-content animate-fade-in-up">
-      <span class="hero-label">Ферма в Изборске, Псковская область</span>
-      <h1 class="hero-title">
-        Натуральные продукты<br/>
-        <em>прямо с грядки</em>
-      </h1>
-      <p class="hero-text">
-        Выращиваем овощи, зелень и ягоды для себя и своей семьи. 
-        Свежие домашние продукты с доставкой по вашему запросу.
-      </p>
-      <div class="hero-actions">
-        <a href="#catalog" class="btn btn-accent btn-lg">Смотреть продукцию</a>
-        <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="btn btn-ghost btn-lg">
-          📞 Позвонить нам
-        </a>
-      </div>
+    <div class="hero-bg">
+        <img
+            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&auto=format&fit=crop&q=80"
+            alt="Поля Изборской долины"
+            class="hero-bg-image"
+            loading="eager"
+        />
+        <div class="hero-overlay"></div>
     </div>
 
-    <div class="hero-badge animate-fade-in delay-3">
-      <div class="badge-inner">
-        <span class="badge-icon">🌱</span>
-        <span class="badge-text">Свежий урожай</span>
-        <span class="badge-sub">прямо с грядки</span>
-      </div>
-    </div>
-  </div>
+    <div class="container hero-container">
+        <div class="hero-content animate-fade-in-up">
+            <span class="hero-label">Ферма в Изборске, Псковская область</span>
+            <h1 class="hero-title">
+                Свежие фермерские продукты<br />
+                <em>с доставкой по Пскову</em>
+            </h1>
+            <p class="hero-text">
+                Наличе товаров актаульно на сайте, заказывайте доствку.
+            </p>
+            <div class="hero-actions">
+                <a href="#catalog" class="btn btn-accent btn-lg"
+                    >Смотреть продукцию</a
+                >
+                <a
+                    href={`tel:${companyData.phone.replace(/[^0-9+]/g, "")}`}
+                    class="btn btn-ghost btn-lg"
+                >
+                    📞 Позвонить нам
+                </a>
+            </div>
+        </div>
 
-  <div class="hero-scroll-hint animate-fade-in delay-4">
-    <svg width="20" height="30" viewBox="0 0 20 30" fill="none">
-      <rect x="1" y="1" width="18" height="28" rx="9" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
-      <circle class="scroll-dot" cx="10" cy="8" r="2" fill="rgba(255,255,255,0.8)"/>
-    </svg>
-  </div>
+        <div class="hero-badge animate-fade-in delay-3">
+            <div class="badge-inner">
+                <span class="badge-icon">🌱</span>
+                <span class="badge-text">Свежий урожай</span>
+                <span class="badge-sub">прямо с грядки</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-scroll-hint animate-fade-in delay-4">
+        <svg width="20" height="30" viewBox="0 0 20 30" fill="none">
+            <rect
+                x="1"
+                y="1"
+                width="18"
+                height="28"
+                rx="9"
+                stroke="rgba(255,255,255,0.5)"
+                stroke-width="2"></rect>
+            <circle
+                class="scroll-dot"
+                cx="10"
+                cy="8"
+                r="2"
+                fill="rgba(255,255,255,0.8)"></circle>
+        </svg>
+    </div>
 </section>
 
 <style>
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-  }
+    .hero {
+        position: relative;
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
 
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
 
-  .hero-bg-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-  }
+    .hero-bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 40%;
+    }
 
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(46, 42, 38, 0.72) 0%,
-      rgba(63, 77, 40, 0.55) 50%,
-      rgba(46, 42, 38, 0.65) 100%
-    );
-  }
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(46, 42, 38, 0.72) 0%,
+            rgba(63, 77, 40, 0.55) 50%,
+            rgba(46, 42, 38, 0.65) 100%
+        );
+    }
 
-  .hero-container {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xl);
-    padding-top: calc(72px + var(--spacing-2xl));
-    padding-bottom: var(--spacing-3xl);
-  }
-
-  @media (min-width: 768px) {
     .hero-container {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xl);
+        padding-top: calc(72px + var(--spacing-2xl));
+        padding-bottom: var(--spacing-3xl);
     }
-  }
 
-  .hero-content {
-    max-width: 640px;
-  }
-
-  .hero-label {
-    display: inline-block;
-    font-family: var(--font-sans);
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-gold-light);
-    margin-bottom: var(--spacing-md);
-  }
-
-  .hero-title {
-    font-family: var(--font-serif);
-    font-size: var(--fs-display);
-    font-weight: 700;
-    line-height: 1.08;
-    color: var(--color-white);
-    margin-bottom: var(--spacing-md);
-    letter-spacing: -0.02em;
-  }
-
-  .hero-title em {
-    font-style: italic;
-    font-weight: 500;
-    color: var(--color-sage-light);
-  }
-
-  .hero-text {
-    font-family: var(--font-sans);
-    font-size: var(--fs-body-lg);
-    line-height: 1.7;
-    color: rgba(255,255,255,0.85);
-    margin-bottom: var(--spacing-lg);
-    max-width: 480px;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-  }
-
-  /* Floating badge */
-  .hero-badge {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    .hero-badge {
-      display: block;
-      flex-shrink: 0;
+    @media (min-width: 768px) {
+        .hero-container {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
     }
-  }
 
-  .badge-inner {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 0.25rem;
-    animation: floatBadge 4s ease-in-out infinite;
-  }
+    .hero-content {
+        max-width: 640px;
+    }
 
-  .badge-icon {
-    font-size: 1.75rem;
-  }
+    .hero-label {
+        display: inline-block;
+        font-family: var(--font-sans);
+        font-size: var(--fs-xs);
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--color-gold-light);
+        margin-bottom: var(--spacing-md);
+    }
 
-  .badge-text {
-    font-family: var(--font-serif);
-    font-size: var(--fs-small);
-    font-weight: 600;
-    color: var(--color-white);
-  }
+    .hero-title {
+        font-family: var(--font-serif);
+        font-size: var(--fs-display);
+        font-weight: 700;
+        line-height: 1.08;
+        color: var(--color-white);
+        margin-bottom: var(--spacing-md);
+        letter-spacing: -0.02em;
+    }
 
-  .badge-sub {
-    font-size: var(--fs-xs);
-    color: rgba(255,255,255,0.7);
-  }
+    .hero-title em {
+        font-style: italic;
+        font-weight: 500;
+        color: var(--color-sage-light);
+    }
 
-  @keyframes floatBadge {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
+    .hero-text {
+        font-family: var(--font-sans);
+        font-size: var(--fs-body-lg);
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: var(--spacing-lg);
+        max-width: 480px;
+    }
 
-  /* Scroll hint */
-  .hero-scroll-hint {
-    position: absolute;
-    bottom: var(--spacing-lg);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
-  }
-
-  .scroll-dot {
-    animation: scrollDot 2s ease-in-out infinite;
-  }
-
-  @keyframes scrollDot {
-    0%, 100% { cy: 8; opacity: 1; }
-    50% { cy: 18; opacity: 0.3; }
-  }
-
-  /* Mobile tweaks */
-  @media (max-width: 480px) {
     .hero-actions {
-      flex-direction: column;
-      width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
     }
-    .hero-actions .btn {
-      width: 100%;
-      text-align: center;
+
+    /* Floating badge */
+    .hero-badge {
+        display: none;
     }
-  }
+
+    @media (min-width: 768px) {
+        .hero-badge {
+            display: block;
+            flex-shrink: 0;
+        }
+    }
+
+    .badge-inner {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 0.25rem;
+        animation: floatBadge 4s ease-in-out infinite;
+    }
+
+    .badge-icon {
+        font-size: 1.75rem;
+    }
+
+    .badge-text {
+        font-family: var(--font-serif);
+        font-size: var(--fs-small);
+        font-weight: 600;
+        color: var(--color-white);
+    }
+
+    .badge-sub {
+        font-size: var(--fs-xs);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    @keyframes floatBadge {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-12px);
+        }
+    }
+
+    /* Scroll hint */
+    .hero-scroll-hint {
+        position: absolute;
+        bottom: var(--spacing-lg);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .scroll-dot {
+        animation: scrollDot 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollDot {
+        0%,
+        100% {
+            cy: 8;
+            opacity: 1;
+        }
+        50% {
+            cy: 18;
+            opacity: 0.3;
+        }
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 480px) {
+        .hero-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .hero-actions .btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
 </style>
