@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
 import fallbackProducts from '../data/products.json';
 
 export interface Product {
@@ -9,6 +12,8 @@ export interface Product {
   image: string;
   inStock: boolean;
 }
+
+const DEFAULT_IMAGE = '/images/default_image_card.png';
 
 // Simple CSV parser for Google Sheets CSV export
 function parseCSV(csvText: string): Record<string, string>[] {
@@ -108,7 +113,51 @@ export function formatCsvUrl(sheetUrlOrId: string): string {
   return url;
 }
 
-const DEFAULT_IMAGE = '/images/default_image_card.png';
+/**
+ * Downloads a remote image and saves it to public/images/ so that temporary cloud links never expire.
+ */
+async function downloadAndCacheImage(imgUrl: string, cacheKey: string): Promise<string> {
+  try {
+    const hash = crypto.createHash('md5').update(cacheKey).digest('hex').slice(0, 12);
+    const imagesDir = path.resolve(process.cwd(), 'public/images');
+    if (!fs.existsSync(imagesDir)) {
+      fs.mkdirSync(imagesDir, { recursive: true });
+    }
+
+    const localFileName = `img_${hash}.jpg`;
+    const localFilePath = path.join(imagesDir, localFileName);
+    const publicPath = `/images/${localFileName}`;
+
+    if (!fs.existsSync(localFilePath) || fs.statSync(localFilePath).size === 0) {
+      const response = await fetch(imgUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      if (buffer.length === 0) {
+        throw new Error('Downloaded image buffer is empty');
+      }
+
+      fs.writeFileSync(localFilePath, buffer);
+      console.log(`📸 Закешировано фото товара: ${publicPath} (${Math.round(buffer.length / 1024)} KB)`);
+    }
+
+    // Copy to dist directory if dist/ exists during static build
+    const distImagesDir = path.resolve(process.cwd(), 'dist/images');
+    if (fs.existsSync(path.resolve(process.cwd(), 'dist'))) {
+      if (!fs.existsSync(distImagesDir)) {
+        fs.mkdirSync(distImagesDir, { recursive: true });
+      }
+      fs.copyFileSync(localFilePath, path.join(distImagesDir, localFileName));
+    }
+
+    return publicPath;
+  } catch (err) {
+    console.error('⚠️ Ошибка кэширования изображения:', err);
+    return imgUrl;
+  }
+}
 
 /**
  * Formats and resolves image URLs (handles Yandex Disk, Google Drive, and empty fallbacks)
@@ -127,16 +176,11 @@ export async function formatImageUrl(urlStr?: string): Promise<string> {
       const res = await fetch(apiUrl);
       if (res.ok) {
         const data = await res.json();
-        if (data.sizes && Array.isArray(data.sizes) && data.sizes.length > 0) {
-          const preferredSize = data.sizes.find(
-            (s: any) => s.name === 'XXL' || s.name === 'XL' || s.name === 'L' || s.name === 'M'
-          ) || data.sizes[data.sizes.length - 1];
-          if (preferredSize?.url) {
-            return preferredSize.url;
-          }
-        }
-        if (data.file) {
-          return data.file;
+        const rawUrl = data.file || (data.sizes && data.sizes.find(
+          (s: any) => s.name === 'ORIGINAL' || s.name === 'XXL' || s.name === 'XL' || s.name === 'L' || s.name === 'M'
+        )?.url);
+        if (rawUrl) {
+          return await downloadAndCacheImage(rawUrl, url);
         }
       }
     } catch (e) {
@@ -148,7 +192,8 @@ export async function formatImageUrl(urlStr?: string): Promise<string> {
   if (url.includes('drive.google.com')) {
     const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
     if (fileIdMatch && fileIdMatch[1]) {
-      return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+      const driveDirectUrl = `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+      return await downloadAndCacheImage(driveDirectUrl, url);
     }
   }
 
