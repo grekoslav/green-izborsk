@@ -7,9 +7,10 @@ export interface Props {
   image: string;
   inStock: boolean;
   category: string;
+  email?: string;
 }
 
-const { id, name, price, description, image, inStock, category } = Astro.props;
+const { id, name, price, description, image, inStock, category, email = '' } = Astro.props;
 ---
 
 <article class="product-card">
@@ -39,7 +40,7 @@ const { id, name, price, description, image, inStock, category } = Astro.props;
       </span>
       <button 
         class="btn btn-secondary card-btn" 
-        onclick={`window.openLeadForm('${name.replace(/'/g, "\\'")}')`}
+        onclick={`window.openLeadForm('${name.replace(/'/g, "\\'")}', '${(email || '').replace(/'/g, "\\'")}')`}
       >
         Заказать
       </button>

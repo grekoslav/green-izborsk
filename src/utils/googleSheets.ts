@@ -11,6 +11,7 @@ export interface Product {
   description: string;
   image: string;
   inStock: boolean;
+  email?: string;
 }
 
 const DEFAULT_IMAGE = '/images/default_image_card.png';
@@ -258,6 +259,7 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
         
         const stockRaw = getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']).toLowerCase();
         const inStock = stockRaw.includes('да') || stockRaw.includes('true') || stockRaw.includes('1') || stockRaw.includes('в наличии') || stockRaw === 'есть';
+        const email = getColValue(row, ['email', 'почта', 'емайл', 'e-mail']);
 
         return {
           id: index + 1,
@@ -266,7 +268,8 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
           price,
           description,
           image,
-          inStock
+          inStock,
+          email: email ? email.trim() : ''
         };
       })
     );
