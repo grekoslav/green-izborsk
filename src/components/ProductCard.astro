@@ -14,7 +14,13 @@ const { id, name, price, description, image, inStock, category } = Astro.props;
 
 <article class="product-card">
   <div class="card-image-wrapper">
-    <img src={image} alt={name} class="card-image" loading="lazy" />
+    <img 
+      src={image || '/images/default_image_card.png'} 
+      alt={name} 
+      class="card-image" 
+      loading="lazy" 
+      onerror="this.onerror=null; this.src='/images/default_image_card.png';" 
+    />
     <span class="card-category">{category}</span>
     {!inStock && <span class="card-seasonal">Сезонный</span>}
   </div>

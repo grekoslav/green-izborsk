@@ -108,44 +108,76 @@ export function formatCsvUrl(sheetUrlOrId: string): string {
   return url;
 }
 
+const DEFAULT_IMAGE = '/images/default_image_card.png';
+
 /**
- * Returns a relevant fallback photo based on product name/category if missing in Google Sheets
+ * Formats and resolves image URLs (handles Yandex Disk, Google Drive, and empty fallbacks)
  */
-function getProductFallbackImage(name: string, category: string): string {
-  const text = `${name} ${category}`.toLowerCase();
-  
-  if (text.includes('мед') || text.includes('мёд')) {
-    return '/images/honey.jpg';
+export async function formatImageUrl(urlStr?: string): Promise<string> {
+  if (!urlStr || !urlStr.trim()) {
+    return DEFAULT_IMAGE;
   }
-  if (text.includes('картофель') || text.includes('картошка')) {
-    return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=800&auto=format&fit=crop&q=80';
+
+  let url = urlStr.trim();
+
+  // Handle Yandex Disk links (e.g. https://disk.yandex.ru/i/... or https://yadi.sk/i/...)
+  if (url.includes('disk.yandex.ru') || url.includes('yadi.sk')) {
+    try {
+      const apiUrl = `https://cloud-api.yandex.net/v1/disk/public/resources?public_key=${encodeURIComponent(url)}`;
+      const res = await fetch(apiUrl);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.sizes && Array.isArray(data.sizes) && data.sizes.length > 0) {
+          const preferredSize = data.sizes.find(
+            (s: any) => s.name === 'XXL' || s.name === 'XL' || s.name === 'L' || s.name === 'M'
+          ) || data.sizes[data.sizes.length - 1];
+          if (preferredSize?.url) {
+            return preferredSize.url;
+          }
+        }
+        if (data.file) {
+          return data.file;
+        }
+      }
+    } catch (e) {
+      console.error('Ошибка разрешения Yandex.Disk URL:', e);
+    }
   }
-  if (text.includes('капуста')) {
-    return 'https://images.unsplash.com/photo-1695089028077-5e7949d238d3?q=80&w=1412&auto=format&fit=crop&ixlib=rb-4.1.0';
+
+  // Handle Google Drive file links (e.g. https://drive.google.com/file/d/ID/view)
+  if (url.includes('drive.google.com')) {
+    const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${fileIdMatch[1]}`;
+    }
   }
-  if (text.includes('томат') || text.includes('помидор')) {
-    return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop&q=80';
-  }
-  if (text.includes('зелень') || text.includes('петрушка') || text.includes('укроп')) {
-    return 'https://images.unsplash.com/photo-1595858169229-373fc3e02d6b?w=800&auto=format&fit=crop&q=80';
-  }
-  if (text.includes('огур')) {
-    return 'https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=800&auto=format&fit=crop&q=80';
-  }
-  if (text.includes('клубник') || text.includes('ягод')) {
-    return 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&auto=format&fit=crop&q=80';
-  }
-  
-  return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&auto=format&fit=crop&q=80';
+
+  return url;
+}
+
+/**
+ * Returns a fallback photo if missing in Google Sheets
+ */
+function getProductFallbackImage(): string {
+  return DEFAULT_IMAGE;
 }
 
 /**
  * Fetch products from a published Google Sheet CSV URL or Spreadsheet ID
  */
 export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Promise<Product[]> {
+  const getFallback = async () => {
+    return await Promise.all(
+      fallbackProducts.map(async (p) => ({
+        ...p,
+        image: await formatImageUrl(p.image)
+      }))
+    );
+  };
+
   if (!sheetUrlOrId || !sheetUrlOrId.trim()) {
     console.log('ℹ️ Google Sheet URL не указан. Используются локальные данные (products.json).');
-    return fallbackProducts;
+    return getFallback();
   }
 
   try {
@@ -158,42 +190,49 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
     const csvText = await response.text();
     const rawRows = parseCSV(csvText);
 
-    if (rawRows.length === 0) {
+    // Filter out rows that have no product name
+    const validRows = rawRows.filter(row => {
+      const name = getColValue(row, ['name', 'название', 'наименование', 'продукт']);
+      return name && name.trim().length > 0;
+    });
+
+    if (validRows.length === 0) {
       console.warn('⚠️ Google Таблица пустая или доступ ограничен.');
-      return fallbackProducts;
+      return getFallback();
     }
 
-    const products: Product[] = rawRows.map((row, index) => {
-      const category = getColValue(row, ['category', 'категория']) || 'Разное';
-      const name = getColValue(row, ['name', 'название', 'наименование', 'продукт']) || `Товар #${index + 1}`;
-      const price = getColValue(row, ['price', 'цена', 'стоимость']) || 'По запросу';
-      const description = getColValue(row, ['description', 'описание']) || '';
-      
-      let image = getColValue(row, ['image', 'картинка', 'изображение', 'фото']);
-      if (!image || !image.trim()) {
-        image = getProductFallbackImage(name, category);
-      }
-      
-      const stockRaw = getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']).toLowerCase();
-      const inStock = stockRaw.includes('да') || stockRaw.includes('true') || stockRaw.includes('1') || stockRaw.includes('в наличии') || stockRaw === 'есть';
+    const products: Product[] = await Promise.all(
+      validRows.map(async (row, index) => {
+        const category = getColValue(row, ['category', 'категория']) || 'Разное';
+        const name = getColValue(row, ['name', 'название', 'наименование', 'продукт']) || `Товар #${index + 1}`;
+        const price = getColValue(row, ['price', 'цена', 'стоимость']) || 'По запросу';
+        const description = getColValue(row, ['description', 'описание']) || '';
+        
+        const rawImage = getColValue(row, ['image', 'картинка', 'изображение', 'фото']);
+        const image = await formatImageUrl(rawImage);
+        
+        const stockRaw = getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']).toLowerCase();
+        const inStock = stockRaw.includes('да') || stockRaw.includes('true') || stockRaw.includes('1') || stockRaw.includes('в наличии') || stockRaw === 'есть';
 
-      return {
-        id: index + 1,
-        category,
-        name,
-        price,
-        description,
-        image,
-        inStock
-      };
-    });
+        return {
+          id: index + 1,
+          category,
+          name,
+          price,
+          description,
+          image,
+          inStock
+        };
+      })
+    );
 
     console.log(`✅ Загружено товаров из Google Таблицы: ${products.length}`);
     return products;
 
   } catch (error) {
     console.error('❌ Ошибка загрузки данных из Google Таблицы:', error);
-    console.log('🔄 Откат на локальный фал продуктов (products.json)...');
-    return fallbackProducts;
+    console.log('🔄 Откат на локальный файл продуктов (products.json)...');
+    return getFallback();
   }
 }
+
