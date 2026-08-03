@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://grekoslav.github.io/green-izborsk/sitemap.xml
+Sitemap: https://green-izborsk.ru/sitemap.xml

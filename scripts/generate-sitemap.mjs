@@ -6,8 +6,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
-const SITE_URL = 'https://grekoslav.github.io';
-const BASE_PATH = '/green-izborsk';
+const SITE_URL = 'https://green-izborsk.ru';
+const BASE_PATH = '';
 const PAGES_DIR = path.join(projectRoot, 'src', 'pages');
 const OUTPUT_FILE = path.join(projectRoot, 'public', 'sitemap.xml');
 
@@ -74,7 +74,7 @@ function filePathToRoute(relativePath) {
 
 // Determine priority & changefreq based on route
 function getRouteMetadata(routeUrl) {
-  if (routeUrl.endsWith('/green-izborsk/')) {
+  if (routeUrl === `${SITE_URL}/` || routeUrl.endsWith('green-izborsk.ru/')) {
     return { priority: '1.0', changefreq: 'weekly' };
   }
   if (routeUrl.includes('/privacy')) {
