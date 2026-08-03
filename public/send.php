@@ -40,22 +40,18 @@ if (strlen($digits) < 11) {
     exit;
 }
 
-// 4. Determine recipient email address
+// 4. Determine recipient email addresses
 $recipients = [];
 if (!empty($targetEmail) && filter_var($targetEmail, FILTER_VALIDATE_EMAIL)) {
-    $recipients[] = $targetEmail;
+    $recipients[] = trim($targetEmail);
 }
 
-// Always ensure default admin email receives a copy
 if (!in_array($defaultEmail, $recipients)) {
     $recipients[] = $defaultEmail;
 }
 
-$to = implode(', ', $recipients);
-
 // 5. Construct Email Subject and Body
 $subject = "🌾 Новая заявка с сайта: " . ($productName ? $productName : "Общая заявка") . " от " . $name;
-// Encode subject for UTF-8 mail headers
 $subjectEncoded = "=?UTF-8?B?" . base64_encode($subject) . "?=";
 
 $dateStr = date('d.m.Y H:i');
@@ -105,16 +101,27 @@ $message = "
 </html>
 ";
 
-// 6. Headers
+// 6. Headers for Timeweb compatibility
+$fromEmail = 'info@green-izborsk.ru';
+$fromNameEncoded = "=?UTF-8?B?" . base64_encode("Зелёный Изборск") . "?=";
+
 $headers = [];
 $headers[] = 'MIME-Version: 1.0';
 $headers[] = 'Content-type: text/html; charset=utf-8';
-$headers[] = 'From: "Зелёный Изборск" <info@green-izborsk.ru>';
-$headers[] = 'Reply-To: info@green-izborsk.ru';
+$headers[] = 'From: ' . $fromNameEncoded . ' <' . $fromEmail . '>';
+$headers[] = 'Reply-To: ' . $fromEmail;
+$headersStr = implode("\r\n", $headers);
 
-$mailSent = @mail($to, $subjectEncoded, $message, implode("\r\n", $headers));
+$successCount = 0;
+foreach ($recipients as $recipient) {
+    // Note: Timeweb requires fifth parameter -f to set return path
+    $sent = @mail($recipient, $subjectEncoded, $message, $headersStr, "-f " . $fromEmail);
+    if ($sent) {
+        $successCount++;
+    }
+}
 
-if ($mailSent) {
+if ($successCount > 0) {
     echo json_encode(['success' => true, 'message' => 'Заявка успешно отправлена']);
 } else {
     echo json_encode(['success' => false, 'error' => 'Ошибка отправки почты через сервер']);

@@ -14,9 +14,6 @@
     </div>
     
     <form class="lead-form" id="orderForm" novalidate>
-      <input type="hidden" name="access_key" value="68e342cd-264a-4e52-83ad-a51e7d91b781">
-      <input type="hidden" name="subject" value="🌾 Новая заявка с сайта Зелёный Изборск">
-      <input type="hidden" name="from_name" value="Зелёный Изборск">
       <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
       <input type="hidden" name="productName" id="formProductName" value="">
       <input type="hidden" name="targetEmail" id="formTargetEmail" value="">
@@ -338,48 +335,17 @@
       }
 
       try {
-        let isSuccess = false;
-        let errorMessage = '';
+        const response = await fetch('/send.php', {
+          method: 'POST',
+          body: new FormData(form),
+        });
 
-        // Try submitting to Timeweb PHP endpoint first
-        try {
-          const phpRes = await fetch('/send.php', {
-            method: 'POST',
-            body: new FormData(form),
-          });
-
-          if (phpRes.ok) {
-            const phpData = await phpRes.json();
-            if (phpData.success) {
-              isSuccess = true;
-            } else {
-              errorMessage = phpData.error || 'Ошибка отправки формы.';
-            }
-          }
-        } catch (phpErr) {
-          console.warn('PHP mailer endpoint /send.php недоступен, проба Web3Forms:', phpErr);
-        }
-
-        // Fallback to Web3Forms if PHP endpoint was not reached or returned non-success
-        if (!isSuccess && !errorMessage) {
-          const web3Res = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            body: new FormData(form),
-          });
-
-          const web3Data = await web3Res.json();
-          if (web3Data.success) {
-            isSuccess = true;
-          } else {
-            errorMessage = web3Data.message || 'Произошла ошибка при отправке заявки.';
-          }
-        }
-
-        if (isSuccess) {
+        const data = await response.json();
+        if (data.success) {
           form.style.display = 'none';
           if (successMsg) successMsg.style.display = 'flex';
         } else {
-          alert(errorMessage || 'Произошла ошибка при отправке заявки.');
+          alert(data.error || 'Произошла ошибка при отправке заявки.');
         }
       } catch (err) {
         console.error('Ошибка отправки формы:', err);
