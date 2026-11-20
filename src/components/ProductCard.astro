@@ -10,17 +10,22 @@ export interface Props {
   email?: string;
 }
 
-const { id, name, price, description, image, inStock, category, email = '' } = Astro.props;
+import { DEFAULT_IMAGE } from '../utils/googleSheets';
+
+const { name, price, description, image, inStock, category } = Astro.props;
 ---
 
 <article class="product-card">
   <div class="card-image-wrapper">
-    <img 
-      src={image || '/images/default_image_card.png'} 
-      alt={name} 
-      class="card-image" 
-      loading="lazy" 
-      onerror="this.onerror=null; this.src='/images/default_image_card.png';" 
+    <img
+      src={image || DEFAULT_IMAGE}
+      alt={name}
+      class="card-image"
+      width="800"
+      height="600"
+      loading="lazy"
+      decoding="async"
+      onerror={`this.onerror=null; this.src='${DEFAULT_IMAGE}';`}
     />
     <span class="card-category">{category}</span>
     {!inStock && <span class="card-seasonal">Сезонный</span>}
@@ -39,8 +44,10 @@ const { id, name, price, description, image, inStock, category, email = '' } = A
         {inStock ? 'В наличии' : 'Под заказ'}
       </span>
       <button 
-        class="btn btn-secondary card-btn" 
-        onclick={`window.openLeadForm('${name.replace(/'/g, "\\'")}', '${(email || '').replace(/'/g, "\\'")}')`}
+        type="button"
+        class="btn btn-secondary card-btn"
+        data-lead-form
+        data-product={name}
       >
         Заказать
       </button>

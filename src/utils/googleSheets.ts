@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import sharp from 'sharp';
 import fallbackProducts from '../data/products.json';
 
 export interface Product {
@@ -14,58 +15,75 @@ export interface Product {
   email?: string;
 }
 
-const DEFAULT_IMAGE = '/images/default_image_card.png';
+export const DEFAULT_IMAGE = '/images/default_image_card.webp';
 
-// Simple CSV parser for Google Sheets CSV export
+// Максимальная ширина фото товара: карточка на сайте не шире ~400px, x2 для Retina
+const PRODUCT_IMAGE_WIDTH = 800;
+
+/**
+ * CSV parser for Google Sheets CSV export.
+ * Корректно обрабатывает кавычки, запятые и переносы строк внутри ячеек
+ * (например, многострочное описание товара).
+ */
 function parseCSV(csvText: string): Record<string, string>[] {
-  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
-  if (lines.length < 2) return [];
+  const records: string[][] = [];
+  let row: string[] = [];
+  let cur = '';
+  let inQuotes = false;
 
-  // Parse row handling quotes
-  const parseRow = (text: string): string[] => {
-    const result: string[] = [];
-    let cur = '';
-    let inQuotes = false;
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i];
+    if (inQuotes) {
       if (char === '"') {
-        if (inQuotes && text[i + 1] === '"') {
+        if (csvText[i + 1] === '"') {
           cur += '"';
           i++;
         } else {
-          inQuotes = !inQuotes;
+          inQuotes = false;
         }
-      } else if (char === ',' && !inQuotes) {
-        result.push(cur.trim());
-        cur = '';
       } else {
         cur += char;
       }
+    } else if (char === '"') {
+      inQuotes = true;
+    } else if (char === ',') {
+      row.push(cur.trim());
+      cur = '';
+    } else if (char === '\n' || char === '\r') {
+      if (char === '\r' && csvText[i + 1] === '\n') i++;
+      row.push(cur.trim());
+      records.push(row);
+      row = [];
+      cur = '';
+    } else {
+      cur += char;
     }
-    result.push(cur.trim());
-    return result;
-  };
-
-  const rawHeaders = parseRow(lines[0]);
-  // Normalize header names
-  const headers = rawHeaders.map(h => h.toLowerCase().trim().replace(/^"|"$/g, ''));
-
-  const rows: Record<string, string>[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const values = parseRow(lines[i]);
-    const rowObj: Record<string, string> = {};
-    headers.forEach((header, idx) => {
-      let val = values[idx] || '';
-      // Strip surrounding quotes
-      if (val.startsWith('"') && val.endsWith('"')) {
-        val = val.slice(1, -1).replace(/""/g, '"');
-      }
-      rowObj[header] = val;
-    });
-    rows.push(rowObj);
+  }
+  if (cur.length > 0 || row.length > 0) {
+    row.push(cur.trim());
+    records.push(row);
   }
 
-  return rows;
+  const nonEmpty = records.filter(r => r.some(v => v.length > 0));
+  if (nonEmpty.length < 2) return [];
+
+  const headers = nonEmpty[0].map(h => h.toLowerCase().trim());
+
+  return nonEmpty.slice(1).map(values => {
+    const rowObj: Record<string, string> = {};
+    headers.forEach((header, idx) => {
+      rowObj[header] = values[idx] || '';
+    });
+    return rowObj;
+  });
+}
+
+/** Разбирает значение колонки «Наличие». «Нет в наличии» не должно считаться «в наличии». */
+function parseInStock(raw: string): boolean {
+  const v = raw.trim().toLowerCase();
+  if (!v) return false;
+  if (/(^|\s)(нет|не|false|0)(\s|$)|отсутств|законч|под заказ/.test(v)) return false;
+  return /^(да|есть|true|1|\+|yes)$/.test(v) || v.includes('в наличии');
 }
 
 // Helper to normalize column values matching English or Russian headers
@@ -125,23 +143,28 @@ async function downloadAndCacheImage(imgUrl: string, cacheKey: string): Promise<
       fs.mkdirSync(imagesDir, { recursive: true });
     }
 
-    const localFileName = `img_${hash}.jpg`;
+    const localFileName = `img_${hash}.webp`;
     const localFilePath = path.join(imagesDir, localFileName);
     const publicPath = `/images/${localFileName}`;
-
     if (!fs.existsSync(localFilePath) || fs.statSync(localFilePath).size === 0) {
       const response = await fetch(imgUrl);
       if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
       }
-
       const buffer = Buffer.from(await response.arrayBuffer());
       if (buffer.length === 0) {
         throw new Error('Downloaded image buffer is empty');
       }
 
-      fs.writeFileSync(localFilePath, buffer);
-      console.log(`📸 Закешировано фото товара: ${publicPath} (${Math.round(buffer.length / 1024)} KB)`);
+      // Уменьшаем до разумного размера и конвертируем в WebP (в 5–10 раз легче оригинала)
+      const optimized = await sharp(buffer)
+        .rotate()
+        .resize({ width: PRODUCT_IMAGE_WIDTH, withoutEnlargement: true })
+        .webp({ quality: 78 })
+        .toBuffer();
+
+      fs.writeFileSync(localFilePath, optimized);
+      console.log(`📸 Закешировано фото товара: ${publicPath} (${Math.round(buffer.length / 1024)} KB → ${Math.round(optimized.length / 1024)} KB)`);
     }
 
     // Copy to dist directory if dist/ exists during static build
@@ -211,7 +234,20 @@ function getProductFallbackImage(): string {
 /**
  * Fetch products from a published Google Sheet CSV URL or Spreadsheet ID
  */
-export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Promise<Product[]> {
+const productsCache = new Map<string, Promise<Product[]>>();
+
+/** Загружает товары один раз за сборку (используется и страницей, и lead-recipients.php) */
+export function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Promise<Product[]> {
+  const key = sheetUrlOrId?.trim() || '';
+  let cached = productsCache.get(key);
+  if (!cached) {
+    cached = loadProducts(sheetUrlOrId);
+    productsCache.set(key, cached);
+  }
+  return cached;
+}
+
+async function loadProducts(sheetUrlOrId?: string): Promise<Product[]> {
   const getFallback = async () => {
     return await Promise.all(
       fallbackProducts.map(async (p) => ({
@@ -257,8 +293,7 @@ export async function fetchProductsFromGoogleSheets(sheetUrlOrId?: string): Prom
         const rawImage = getColValue(row, ['image', 'картинка', 'изображение', 'фото']);
         const image = await formatImageUrl(rawImage);
         
-        const stockRaw = getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']).toLowerCase();
-        const inStock = stockRaw.includes('да') || stockRaw.includes('true') || stockRaw.includes('1') || stockRaw.includes('в наличии') || stockRaw === 'есть';
+        const inStock = parseInStock(getColValue(row, ['instock', 'наличие', 'в наличии', 'статус']));
         const email = getColValue(row, ['email', 'почта', 'емайл', 'e-mail']);
 
         return {

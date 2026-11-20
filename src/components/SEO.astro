@@ -17,7 +17,7 @@ const {
   title,
   description = companyData.description,
   canonical,
-  image = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&auto=format&fit=crop&q=80',
+  image = '/images/og-image.jpg',
   imageAlt = `${companyData.name} — Ферма в Изборске`,
   type = 'website',
   noindex = false,
@@ -44,30 +44,39 @@ const robotsContent = [
   nofollow ? 'nofollow' : 'follow',
 ].join(', ');
 
-// Base Schema.org JSON-LD for Farm / LocalBusiness
+const siteURL = new URL('/', Astro.site || Astro.url).href;
+
+// Base Schema.org JSON-LD (типа «Farm» в schema.org нет — используем LocalBusiness)
 const defaultSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Farm',
-  '@id': `${Astro.site || 'https://green-izborsk.ru'}#farm`,
+  '@type': 'LocalBusiness',
+  '@id': `${siteURL}#business`,
   'name': companyData.name,
   'description': companyData.description,
-  'url': (Astro.site || Astro.url).href,
+  'url': siteURL,
+  'logo': new URL('/apple-touch-icon.png', siteURL).href,
   'telephone': companyData.phone,
   'email': companyData.email,
   'address': {
     '@type': 'PostalAddress',
     'addressLocality': 'Изборск',
     'addressRegion': 'Псковская область',
-    'addressCountry': 'RU',
-    'streetAddress': companyData.address
+    'addressCountry': 'RU'
   },
   'geo': {
     '@type': 'GeoCoordinates',
     'latitude': 57.7094,
     'longitude': 27.8601
   },
-  'image': absoluteImageURL,
-  'priceRange': '₽₽'
+  'image': new URL('/images/og-image.jpg', siteURL).href,
+  'priceRange': '₽₽',
+  'areaServed': ['Псков', 'Псковская область'],
+  'openingHoursSpecification': {
+    '@type': 'OpeningHoursSpecification',
+    'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    'opens': '08:00',
+    'closes': '20:00'
+  }
 };
 
 const schemasToRender = jsonLd
@@ -77,7 +86,6 @@ const schemasToRender = jsonLd
 
 <!-- Primary Meta Tags -->
 <title>{formattedTitle}</title>
-<meta name="title" content={formattedTitle} />
 <meta name="description" content={description} />
 <meta name="robots" content={robotsContent} />
 <link rel="canonical" href={canonicalURL} />
@@ -89,6 +97,8 @@ const schemasToRender = jsonLd
 <meta property="og:description" content={description} />
 <meta property="og:image" content={absoluteImageURL} />
 <meta property="og:image:alt" content={imageAlt} />
+{image === '/images/og-image.jpg' && <meta property="og:image:width" content="1200" />}
+{image === '/images/og-image.jpg' && <meta property="og:image:height" content="630" />}
 <meta property="og:site_name" content={companyData.name} />
 <meta property="og:locale" content="ru_RU" />
 

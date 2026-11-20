@@ -1,5 +1,10 @@
 ---
+import farmGarden from '../assets/farm-garden.jpg';
+import tomatoes from '../assets/tomatoes.jpg';
+import greens from '../assets/greens.jpg';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import honeyImage from '../assets/honey.jpg';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LeadForm from '../components/LeadForm.astro';
@@ -12,14 +17,21 @@ const aboutSchema = {
   '@type': 'AboutPage',
   'name': `О нас — ${companyData.name}`,
   'description': 'Семейное хозяйство в Изборской долине. Выращиваем продукты для себя и своей семьи, а излишками урожая с радостью делимся с вами.',
-  'url': `${Astro.site || ''}${base}about/`
+  'url': new URL('/about/', Astro.site).href
 };
 ---
 
 <Layout 
   title={`О ферме — ${companyData.name}`}
   description="Мы — семейное хозяйство в Изборске. Всё, что растёт на нашем огороде, мы выращиваем для себя и детей, а излишки продаём соседям и гостям."
-  jsonLd={aboutSchema}
+  jsonLd={[aboutSchema, {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Главная', 'item': new URL('/', Astro.site).href },
+      { '@type': 'ListItem', 'position': 2, 'name': 'О ферме', 'item': new URL('/about/', Astro.site).href }
+    ]
+  }]}
 >
   <Header />
 
@@ -59,9 +71,13 @@ const aboutSchema = {
             </p>
           </div>
           <div class="story-image-box">
-            <img 
-              src="https://images.unsplash.com/photo-1500076656116-558758c991c1?w=900&auto=format&fit=crop&q=80" 
-              alt="Огород в Изборске" 
+            <Image
+              src={farmGarden}
+              widths={[480, 720, 960, 1200]}
+              sizes="(min-width: 900px) 500px, 100vw"
+              format="webp"
+              quality={72}
+              alt="Огород в Изборске"
               class="story-img"
             />
           </div>
@@ -117,15 +133,29 @@ const aboutSchema = {
 
         <div class="gallery-grid">
           <div class="gallery-item">
-            <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80" alt="Спелые томаты" />
+            <Image
+              src={tomatoes}
+              widths={[400, 600, 800]}
+              sizes="(min-width: 768px) 380px, 100vw"
+              format="webp"
+              quality={72}
+              alt="Спелые томаты"
+            />
             <div class="gallery-caption">Спелые томаты на открытом грунте</div>
           </div>
           <div class="gallery-item">
-            <img src="https://images.unsplash.com/photo-1595858169229-373fc3e02d6b?w=600&auto=format&fit=crop&q=80" alt="Свежая зелень" />
+            <Image
+              src={greens}
+              widths={[400, 600, 800]}
+              sizes="(min-width: 768px) 380px, 100vw"
+              format="webp"
+              quality={72}
+              alt="Свежая зелень с грядки"
+            />
             <div class="gallery-caption">Ароматная зелень с утренней росой</div>
           </div>
           <div class="gallery-item">
-            <img src="/images/honey.jpg" alt="Пасека и мёд" />
+            <Image src={honeyImage} widths={[400, 600, 800]} sizes="(min-width: 768px) 380px, 100vw" format="webp" quality={72} alt="Пасека и мёд" />
             <div class="gallery-caption">Собственная пасека в долине</div>
           </div>
         </div>
@@ -139,7 +169,7 @@ const aboutSchema = {
           <h2>Хотите попробовать настоящие фермерские продукты?</h2>
           <p>Оставьте заявку или звоните нам — мы с удовольствием приготовим свежий заказ для вас!</p>
           <div class="cta-buttons">
-            <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')">Оставить заявку</button>
+            <button class="btn btn-accent btn-lg" type="button" data-lead-form>Оставить заявку</button>
             <a href={`${base}#catalog`} class="btn btn-secondary btn-lg">Смотреть каталог</a>
           </div>
         </div>

@@ -1,4 +1,7 @@
 ---
+import farmGarden from '../assets/farm-garden.jpg';
+import freshVegetables from '../assets/fresh-vegetables.jpg';
+import { Image } from "astro:assets";
 ---
 
 <section id="about" class="about section">
@@ -6,18 +9,24 @@
     <div class="about-grid">
       <div class="about-images">
         <div class="about-img-main">
-          <img 
-            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?w=800&auto=format&fit=crop&q=80" 
-            alt="Наша ферма в Изборске" 
-            loading="lazy" 
-          />
+          <Image
+              src={farmGarden}
+              widths={[400, 600, 900]}
+              sizes="(min-width: 900px) 330px, 60vw"
+              format="webp"
+              quality={72}
+              alt="Наша ферма в Изборске"
+            />
         </div>
         <div class="about-img-accent">
-          <img 
-            src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&auto=format&fit=crop&q=80" 
-            alt="Свежие овощи с грядки" 
-            loading="lazy" 
-          />
+          <Image
+              src={freshVegetables}
+              widths={[300, 450, 600]}
+              sizes="(min-width: 900px) 215px, 40vw"
+              format="webp"
+              quality={72}
+              alt="Свежие овощи с грядки"
+            />
         </div>
       </div>
 

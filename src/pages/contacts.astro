@@ -12,14 +12,21 @@ const contactSchema = {
   '@type': 'ContactPage',
   'name': `Контакты — ${companyData.name}`,
   'description': 'Контактная информация фермы Зелёный Изборск. Телефон, адрес, электронная почта и схема проезда.',
-  'url': `${Astro.site || ''}${base}contacts/`
+  'url': new URL('/contacts/', Astro.site).href
 };
 ---
 
 <Layout 
   title={`Контакты — ${companyData.name}`}
   description="Контакты фермы «Зелёный Изборск». Звоните, пишите или приезжайте в гости за свежими натуральными продуктами."
-  jsonLd={contactSchema}
+  jsonLd={[contactSchema, {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      { '@type': 'ListItem', 'position': 1, 'name': 'Главная', 'item': new URL('/', Astro.site).href },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Контакты', 'item': new URL('/contacts/', Astro.site).href }
+    ]
+  }]}
 >
   <Header />
 
@@ -101,7 +108,7 @@ const contactSchema = {
               <p>Заполните форму, и мы свяжемся с вами в течение 15 минут для уточнения наличия и времени доставки.</p>
               
               <div class="action-wrap">
-                <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')" style="width: 100%">
+                <button class="btn btn-accent btn-lg" type="button" data-lead-form style="width: 100%">
                   Заполнить заявку
                 </button>
                 <div class="or-divider"><span>или свяжитесь напрямую</span></div>

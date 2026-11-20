@@ -58,7 +58,7 @@ import companyData from '../data/company.json';
     </div>
 
     <div class="order-cta">
-      <button class="btn btn-accent btn-lg" onclick="window.openLeadForm('')">Оставить заявку</button>
+      <button class="btn btn-accent btn-lg" type="button" data-lead-form>Оставить заявку</button>
       <span class="cta-or">или</span>
       <a href={`tel:${companyData.phone.replace(/[^0-9+]/g, '')}`} class="cta-phone">
         📞 {companyData.phone}

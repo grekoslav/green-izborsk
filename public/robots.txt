@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /send.php
 
 Sitemap: https://green-izborsk.ru/sitemap.xml

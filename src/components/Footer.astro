@@ -19,9 +19,9 @@ const base = import.meta.env.BASE_URL;
         <h4 class="footer-heading">Навигация</h4>
         <nav class="footer-nav">
           <a href={`${base}#catalog`}>Продукция</a>
-          <a href={`${base}about`}>О ферме</a>
+          <a href={`${base}about/`}>О ферме</a>
           <a href={`${base}#how-to-order`}>Как заказать</a>
-          <a href={`${base}contacts`}>Контакты</a>
+          <a href={`${base}contacts/`}>Контакты</a>
         </nav>
       </div>
 
@@ -46,13 +46,13 @@ const base = import.meta.env.BASE_URL;
       <div class="footer-col">
         <h4 class="footer-heading">Заказать</h4>
         <p class="footer-order-text">Позвоните или оставьте заявку — мы перезвоним!</p>
-        <button class="btn btn-accent" style="width:100%" onclick="window.openLeadForm('')">Оставить заявку</button>
+        <button class="btn btn-accent" style="width:100%" type="button" data-lead-form>Оставить заявку</button>
       </div>
     </div>
 
     <div class="footer-bottom">
       <p>&copy; 2026 {companyData.name}. Все права защищены.</p>
-      <a href={`${base}privacy`} class="footer-legal-link">Пользовательское соглашение</a>
+      <a href={`${base}privacy/`} class="footer-legal-link">Пользовательское соглашение</a>
     </div>
   </div>
 </footer>

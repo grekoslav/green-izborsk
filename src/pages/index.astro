@@ -12,31 +12,52 @@ import { fetchProductsFromGoogleSheets } from '../utils/googleSheets';
 
 const productsData = await fetchProductsFromGoogleSheets(companyData.googleSheetUrl);
 
+// Из строки «от 250 ₽/кг» достаём число 250 для разметки Offer
+const parsePrice = (price: string): number | null => {
+  const m = price.replace(/\s/g, '').match(/\d+(?:[.,]\d+)?/);
+  return m ? Number(m[0].replace(',', '.')) : null;
+};
+
+const siteURL = new URL('/', Astro.site).href;
+
 const catalogSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   'name': 'Каталог продукции фермы «Зелёный Изборск»',
-  'itemListElement': productsData.map((product, index) => ({
-    '@type': 'ListItem',
-    'position': index + 1,
-    'item': {
-      '@type': 'Product',
-      'name': product.name,
-      'description': product.description,
-      'image': product.image,
-      'offers': {
-        '@type': 'Offer',
-        'priceCurrency': 'RUB',
-        'availability': product.inStock 
-          ? 'https://schema.org/InStock' 
-          : 'https://schema.org/LimitedAvailability'
+  'itemListElement': productsData.map((product, index) => {
+    const price = parsePrice(product.price);
+    return {
+      '@type': 'ListItem',
+      'position': index + 1,
+      'item': {
+        '@type': 'Product',
+        'name': product.name,
+        'description': product.description || product.name,
+        'image': new URL(product.image, siteURL).href,
+        'category': product.category,
+        // Offer без цены — ошибка валидации, поэтому добавляем его только если цена указана
+        ...(price !== null && {
+          'offers': {
+            '@type': 'Offer',
+            'price': price,
+            'priceCurrency': 'RUB',
+            'availability': product.inStock
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/PreOrder',
+            'seller': { '@id': `${siteURL}#business` }
+          }
+        })
       }
-    }
-  }))
+    };
+  })
 };
 ---
 
-<Layout jsonLd={catalogSchema}>
+<Layout
+  title={`Фермерские продукты в Пскове с доставкой — ${companyData.name}`}
+  description="Свежие фермерские овощи, зелень, ягоды и мёд с семейной фермы в Изборске. Доставка по Пскову и области, самовывоз с фермы. Актуальное наличие и цены на сайте."
+  jsonLd={catalogSchema}
+>
   <Header />
   
   <main>
@@ -50,7 +71,7 @@ const catalogSchema = {
           <h2 class="section-title">Наша продукция</h2>
           <div class="divider"><span class="divider-icon">🌿</span></div>
           <p class="section-subtitle">
-            Всё, что мы выращиваем — свежее, вкусно и с любовью. 
+            Всё, что мы выращиваем — свежее, вкусное и с любовью. 
             Выберите продукт и оставьте заявку — мы всё обсудим лично.
           </p>
         </div>

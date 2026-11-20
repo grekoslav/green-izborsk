@@ -1,14 +1,21 @@
 ---
+import heroFields from '../assets/hero-fields.jpg';
+import { Image } from "astro:assets";
 import companyData from "../data/company.json";
 ---
 
 <section class="hero" id="hero">
     <div class="hero-bg">
-        <img
-            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1800&auto=format&fit=crop&q=80"
+        <Image
+            src={heroFields}
+            widths={[640, 960, 1280, 1600, 1920]}
+            sizes="100vw"
+            format="webp"
+            quality={70}
             alt="Поля Изборской долины"
             class="hero-bg-image"
             loading="eager"
+            fetchpriority="high"
         />
         <div class="hero-overlay"></div>
     </div>
@@ -21,7 +28,7 @@ import companyData from "../data/company.json";
                 <em>с доставкой по Пскову</em>
             </h1>
             <p class="hero-text">
-                Наличе товаров актаульно на сайте, заказывайте доствку.
+                Овощи, зелень, ягоды и мёд с семейной фермы. Наличие на сайте актуально — выбирайте и заказывайте доставку.
             </p>
             <div class="hero-actions">
                 <a href="#catalog" class="btn btn-accent btn-lg"

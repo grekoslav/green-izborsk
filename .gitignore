@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# product photos cached at build time from Google Sheets
+public/images/img_*

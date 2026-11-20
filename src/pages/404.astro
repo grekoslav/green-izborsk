@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LeadForm from '../components/LeadForm.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout
+  title="Страница не найдена"
+  description="Такой страницы нет. Перейдите на главную, чтобы посмотреть фермерскую продукцию."
+  noindex
+>
+  <Header />
+
+  <main class="not-found section">
+    <div class="container">
+      <span class="not-found-icon" aria-hidden="true">🌾</span>
+      <h1>Страница не найдена</h1>
+      <p>Возможно, ссылка устарела или в адресе опечатка. Загляните в каталог — там всё актуальное.</p>
+      <div class="not-found-actions">
+        <a href={`${base}#catalog`} class="btn btn-accent btn-lg">Смотреть продукцию</a>
+        <a href={base} class="btn btn-secondary btn-lg">На главную</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+  <LeadForm />
+</Layout>
+
+<style>
+  .not-found {
+    text-align: center;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .not-found-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .not-found h1 {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .not-found p {
+    color: var(--color-text-muted);
+    max-width: 480px;
+    margin: 0 auto var(--spacing-lg);
+  }
+
+  .not-found-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>

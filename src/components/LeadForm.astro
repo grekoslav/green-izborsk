@@ -16,7 +16,6 @@
     <form class="lead-form" id="orderForm" novalidate>
       <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
       <input type="hidden" name="productName" id="formProductName" value="">
-      <input type="hidden" name="targetEmail" id="formTargetEmail" value="">
       
       <div id="selectedProduct" class="selected-product" style="display:none">
         <span class="selected-label">Продукт:</span>
@@ -62,7 +61,7 @@
           <input type="checkbox" id="consent" name="consent" class="form-checkbox" aria-describedby="consentError">
           <span>
             Даю согласие на обработку персональных данных 
-            (<a href="/privacy" class="privacy-link" target="_blank">соглашение</a>)
+            (<a href="/privacy/" class="privacy-link" target="_blank">соглашение</a>)
           </span>
         </label>
         <span class="form-error" id="consentError" aria-live="polite"></span>
@@ -83,7 +82,7 @@
 <script>
   declare global {
     interface Window {
-      openLeadForm: (productName?: string, productEmail?: string) => void;
+      openLeadForm: (productName?: string) => void;
     }
   }
 
@@ -106,7 +105,7 @@
   const phoneError = document.getElementById('phoneError');
   const consentError = document.getElementById('consentError');
 
-  window.openLeadForm = function(productName?: string, productEmail?: string) {
+  window.openLeadForm = function(productName?: string) {
     if (modal) {
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -114,8 +113,6 @@
       const inputProd = document.getElementById('formProductName') as HTMLInputElement | null;
       if (inputProd) inputProd.value = productName || '';
 
-      const inputEmail = document.getElementById('formTargetEmail') as HTMLInputElement | null;
-      if (inputEmail) inputEmail.value = productEmail || '';
 
       if (productName && selectedProductEl && selectedProductName) {
         selectedProductEl.style.display = 'flex';
@@ -153,6 +150,14 @@
       if (selectedProductEl) selectedProductEl.style.display = 'none';
     }
   };
+
+  // Кнопки «Заказать» в карточках: <button data-lead-form data-product="...">
+  document.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement | null)?.closest<HTMLElement>('[data-lead-form]');
+    if (trigger) {
+      window.openLeadForm(trigger.dataset.product || '');
+    }
+  });
 
   if (overlay) overlay.addEventListener('click', closeModal);
   if (closeBtn) closeBtn.addEventListener('click', closeModal);

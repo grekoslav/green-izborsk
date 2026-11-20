@@ -36,7 +36,23 @@ $name = isset($_POST['name']) ? trim(strip_tags($_POST['name'])) : '';
 $phone = isset($_POST['phone']) ? trim(strip_tags($_POST['phone'])) : '';
 $comment = isset($_POST['comment']) ? trim(strip_tags($_POST['comment'])) : '';
 $productName = isset($_POST['productName']) ? trim(strip_tags($_POST['productName'])) : '';
-$targetEmail = isset($_POST['targetEmail']) ? trim(strip_tags($_POST['targetEmail'])) : '';
+
+// Ограничение длины полей (защита от мусорных/огромных заявок)
+$name = mb_substr($name, 0, 100);
+$phone = mb_substr($phone, 0, 30);
+$comment = mb_substr($comment, 0, 2000);
+$productName = mb_substr($productName, 0, 200);
+
+// Email ответственного за товар берём ТОЛЬКО из файла, сгенерированного при сборке,
+// а не из данных формы — иначе форму можно использовать для рассылки спама.
+$targetEmail = '';
+$recipientsFile = __DIR__ . '/lead-recipients.php';
+if ($productName !== '' && is_file($recipientsFile)) {
+    $productRecipients = include $recipientsFile;
+    if (is_array($productRecipients) && isset($productRecipients[$productName])) {
+        $targetEmail = $productRecipients[$productName];
+    }
+}
 
 // 3. Validate required fields
 if (mb_strlen($name) < 2) {
@@ -235,9 +251,10 @@ if ($successCount > 0) {
     echo json_encode(['success' => true, 'message' => 'Заявка успешно отправлена']);
 } else {
     $lastErrArr = error_get_last();
-    $diagMsg = isset($lastErrArr['message']) ? $lastErrArr['message'] : 'Настройки mail() на сервере заблокированы или требуют настройки SMTP.';
+    // Подробности пишем в лог сервера, а посетителю показываем понятное сообщение
+    error_log('send.php: mail failed: ' . (isset($lastErrArr['message']) ? $lastErrArr['message'] : 'unknown'));
     echo json_encode([
         'success' => false,
-        'error' => 'Ошибка отправки почты через сервер. ' . $diagMsg
+        'error' => 'Не удалось отправить заявку. Пожалуйста, позвоните нам по телефону.'
     ]);
 }
